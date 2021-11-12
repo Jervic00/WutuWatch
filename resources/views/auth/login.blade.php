@@ -1,0 +1,55 @@
+@extends('layouts.app')
+
+@section('pageTitle', 'Register')
+
+@section('content')
+<div class="container-fluid bg-overlay pt-5">
+    <div class="bg-white text-black mx-auto form-container">
+        @if (session('status'))
+        <div class="bg-warning p-4 rounded-lg mb-6 text-white text-center">
+            {{session('status')}}
+        </div>
+        @endif
+
+        <form action="{{ route('login') }}" method="post">
+            @csrf
+
+            <div class="mb-4">
+                <label for="email">E-mail</label>
+                <input type="text" name="email" class="form-control form-control-lg @error('name')
+                    is-invalid @enderror " placeholder="Your email" id="email" value="{{ old('email') }}">
+
+                @error('email')
+                <div class="text-danger fw-lighter mt-2 fs-6">
+                    {{ $message }}
+                </div>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label for="password">Password</label>
+                <input type="password" name="password" class="form-control form-control-lg @error('name')
+                    is-invalid @enderror " placeholder="Enter your password" id="password">
+
+                @error('password')
+                <div class="text-danger fw-lighter mt-2 fs-6">
+                    {{ $message }}
+                </div>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <div class="flex align-items-center">
+                    <input type="checkbox" name="remember" id="remember" class="mr-2">
+                    <label for="remember">Remember Me</label>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </div>
+
+        </form>
+    </div>
+</div>
+@endsection
