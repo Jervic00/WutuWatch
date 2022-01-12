@@ -28,7 +28,7 @@ class LoginController extends Controller
             return back()->with('status', 'Invalid Login details');
         }
 
-        return redirect()->back();
+        return back();
         /* route('home'); */
     }
 }

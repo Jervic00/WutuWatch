@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
@@ -24,22 +25,25 @@ class RegisterController extends Controller
 
 
         $this->validate($request, [
-            'name' => 'required|max:255',
             'username' => 'required|unique:users|max:26',
             'email' => 'required|email|unique:users|max:255',
+            'birthdate' => 'required',
             'password' => 'required|confirmed|min:8',
         ]);
 
-        User::create([
-            'name' => $request->name,
+        
+
+        $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
+            'birthdate' => $request->birthdate,
             'password' => Hash::make($request->password),
+            'profile_image' => 'no-image.png'
         ]);
-
+        event(new Registered($user));
         //Sign in
         auth()->attempt($request->only('email', 'password'));
 
-        return redirect()->route('dashboard');
+        return redirect()->route('verification.notice');
     }
 }

@@ -3,8 +3,8 @@
 @section('pageTitle', 'Movie Details')
 
 @section('content')
-
-<div class="container py-3 px-5 my-3 bg-custom-2 text-white">
+@include('posts.header_details')
+<div class="container py-3 px-5 mb-3 bg-custom-2 text-white">
     <!-- MOVIE DETAILS -->
     <div class="row movie-details bg-overlay-1 py-3" id="movie-details">
 

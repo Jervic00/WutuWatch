@@ -1,10 +1,16 @@
 @extends('layouts.app')
 
-@section('pageTitle', 'Register')
+@section('pageTitle', 'Log in')
 
 @section('content')
 <div class="container-fluid bg-overlay pt-5">
-    <div class="bg-white text-black mx-auto form-container">
+    
+    <div class="bg-custom-1 text-white mx-auto form-container">
+    <div class="d-flex justify-content-center align-items center">
+    <img src="{{ asset('img/159582.svg') }}" alt="Movie Info Logo" width="50" height="48" class="d-inline-block align-top pe-1" />
+                <h3 class="mt-2">WutuWatch</h3>
+    </div>
+    <h5 class="w-100 text-center">Log in</h5>
         @if (session('status'))
         <div class="bg-warning p-4 rounded-lg mb-6 text-white text-center">
             {{session('status')}}
@@ -37,7 +43,9 @@
                 </div>
                 @enderror
             </div>
-
+            <div class="mb-2">
+                Don't have account? Register<a href="{{ route('register')}}" class="fw-bold"> here.</a>
+            </div>
             <div class="mb-4">
                 <div class="flex align-items-center">
                     <input type="checkbox" name="remember" id="remember" class="mr-2">

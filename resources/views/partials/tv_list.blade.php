@@ -3,7 +3,7 @@
 @section('pageTitle', 'TV Shows')
 
 @section('content')
-<div class="flex-mobile">
+<div class="flex-mobile mb-5">
     <div class="ms-3 col-2 px-2 pt-4 ">
         <div class="bg-custom-1 rounded-top border border-light list-container text-white">
             <h5 class="py-3 ps-3 bg-custom-1 border border-bottom border-light search-menu-container">TV Shows</h5>
@@ -27,6 +27,12 @@
                     <span class="m-0">Genres</span>
                 </div>
                 <div id="tags" class="d-flex flex-wrap justify-content-center align-items-center my-2">
+                </div>
+
+                <div id="sort" class="mx-auto d-flex flex-column my-3">
+                <select id="year-select" class="form-select text-white toggle rounded bg-custom-1 mx-auto">
+                    <option value="popularity.desc" selected>Select Year</option>
+                </select>
                 </div>
 
                 <div id="provider-dropdown" style="width: 90%;" class="form-select text-white bg-custom-1 toggle rounded mx-auto">

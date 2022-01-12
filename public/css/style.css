@@ -14,6 +14,7 @@ nav {
 
 .flex-mobile {
     display: flex;
+    min-height: 100vh;
 }
 
 .search-list-text {
@@ -37,6 +38,7 @@ nav {
 .overview-div {
     transform: translateY(100%);
     min-width: 100%;
+    z-index: 2;
 }
 
 .overview-text {
@@ -141,9 +143,10 @@ nav {
     color: #23282d;
     border-radius: 10px;
 }
-#sort-select {
+#sort-select,#year-select {
     width: 90%;
 }
+
 /* 
 *
 * Details
@@ -169,11 +172,49 @@ nav {
 * COMMENT SECTION
 *
 */
-.add-comment {
-    border-bottom: #3aafa9 1px solid;
+.profile-pic {
+    width:100%; 
+    border-radius: 100px;
+    outline: 1px solid #3aafa9;
+}
+
+.pfp-icon{
+    width: 2rem;
+    border-radius: 99px;
+    outline: 1px solid #399;
+    margin-right: 0.5rem;
+}
+
+.user-avatar{
+    max-width: 9rem;
+}
+
+.user-banner{
+    text-align: center;
+    border: 1px solid #f5f5f5;
 }
 .user-div {
     border-top: #3aafa9 1px solid;
+}
+.page-link {
+    background-color: #17252a !important;
+}
+.page-link:hover {
+    background-color: #3aafa9 !important;
+}
+.page-item.active .page-link {
+    background-color: #3aafa9 !important;
+}
+.like-button {
+    border: 1px solid #adb5bd85;
+}
+.like-button:hover {
+    background-color: #17252a !important;
+    color: white !important;
+}
+.delete-button:hover{
+    background-color: #17252a !important;
+    border: 1px solid #adb5bd85;
 }
 /**
 *
@@ -244,7 +285,9 @@ nav {
     .more-details {
         top: 85% !important;
     }
-
+    .bookmark-btn{
+        flex-direction: column;
+    }
     .rating,
     .card-title {
         font-size: 12px;
@@ -253,7 +296,17 @@ nav {
     .search-menu-container {
         width: 85vw;
     }
-
+/* rating */
+    .submit-rating {
+        flex-wrap: wrap;
+    }
+    .submit-rating button{
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+    i.fas.fa-thumbs-up,i.far.fa-thumbs-up {
+        font-size: 1rem;
+    }
     .flex-mobile {
         display: table-footer-group !important;
     }
@@ -262,6 +315,12 @@ nav {
         flex: 0 0 0%;
         margin: 0 !important;
         padding: 0;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .iphone-X{
+        width: 60px !important;
     }
 }
 
@@ -392,8 +451,9 @@ nav {
 
 .bg {
     /* The image used */
-    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
-        url("img/web-background.jpg");
+   /*  background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)),
+        url("img/web-background.jpg"); */
+        background-color: #1A374D !important;
     /* Full height */
     min-height: 100vh;
     height: 100%;
@@ -406,7 +466,6 @@ nav {
 }
 
 .bg-overlay {
-    background-color: rgba(0, 0, 0, 0.5) !important;
     min-height: 100vh;
     height: 100%;
 }
@@ -448,4 +507,84 @@ nav {
     color: transparent;
     color: black;
     font-size: 14px;
+}
+
+/* DATEPICKER */
+
+.datepicker td{
+    width: 45px !important;
+    height: 35px !important;
+}
+
+td.active.day, td.day:hover {
+    background-color: #3aafa9 !important;
+    background-image: none !important;
+}
+
+.datepicker table tr td span.focused, .datepicker table tr td span:hover {
+    background-color: #3aafa9 !important;
+}
+
+footer .nav-item a:hover{
+    color: #3aafa9 !important;
+}
+
+.fa-2x:hover {
+    cursor: pointer;
+}
+
+.user-container {
+    border-color: #adb5bd85 !important;
+}
+
+.user-review {
+    position: relative;
+    border-color: #adb5bd85 !important;
+
+}
+
+.content-footer{
+    position: absolute;
+    bottom: .7rem;
+}
+
+.comment-from {
+    color:#3aafa9;
+}
+.comment-from:hover {
+    color:#f5f5f5;
+}
+
+/* WATCHLIST */
+
+.pos-relative{
+    position: relative;
+}
+
+.fixed-paginator{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+}
+.delete-watchlist{
+    position: absolute;
+    z-index: 1;
+    right: 0.5rem;
+    top: 0.5rem;
+}
+.delete-favorite{
+    position: absolute;
+    z-index: 1;
+    right: 2rem;
+    top: 0.5rem;
+}
+.delete-favorite:hover{
+    color: #f5f5f5 !important;
+}
+.remove-watchlist:hover{
+    color: #f5f5f5 !important;
 }

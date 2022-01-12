@@ -3,7 +3,7 @@
 @section('pageTitle', 'Movies')
 
 @section('content')
-<div class="flex-mobile">
+<div class="flex-mobile mb-5">
     <div class="ms-3 col-2 px-2 pt-4 ">
         <div class="bg-custom-1 rounded-top border border-light list-container text-white">
             <h5 class="py-3 ps-3 bg-custom-1 border border-bottom border-light search-menu-container">Movies</h5>
@@ -29,6 +29,12 @@
                 <div id="tags" class="d-flex flex-wrap justify-content-center align-items-center my-2">
                 </div>
 
+                <div id="sort" class="mx-auto d-flex flex-column my-3">
+                <select id="year-select" class="form-select text-white toggle rounded bg-custom-1 mx-auto">
+                    <option value="popularity.desc" selected>Select Year</option>
+                </select>
+                </div>
+
                 <div id="provider-dropdown" style="width: 90%;" class="form-select text-white bg-custom-1 toggle rounded mx-auto">
                     <span class="m-0">Watch Providers</span>
                 </div>
@@ -49,12 +55,13 @@
         </div>
     </div>
 
-    <div class=" col-sm-12 container my-3 rounded-4">
-        <div class="row g-0 movie-list" id="movie-list">
+    <div class=" col-sm-12 container my-3 rounded-4 pos-relative">
+        <div class="row g-0 movie-list pb-5" id="movie-list">
         </div>
-        <div class="container-fluid-lg d-flex justify-content-center align-items-center" id="page-container">
+        <div class="container-fluid-lg d-flex justify-content-center align-items-center fixed-paginator" id="page-container">
         </div>
     </div>
 
 </div>
+
 @endsection

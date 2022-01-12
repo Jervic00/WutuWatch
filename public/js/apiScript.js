@@ -1,5 +1,5 @@
 /* TMDB SCRIPT */
-const API_KEY = 'api_key=661b929be88e845e186868fd7d0b11f7';
+const API_KEY = 'api_key=661b929be88e845e186868fd7d0b11f7&language=en-US';
 const BASE_URL = 'https://api.themoviedb.org/3';
 const discoMv_URL = BASE_URL + '/discover/movie?certification_country=US&certification.gte=G&certification.lte=PG-13&' + API_KEY;
 const discoTv_URL = BASE_URL + '/discover/tv?certification_country=US&certification.gte=TV-Y&certification.lte=TV-PG&' + API_KEY;
@@ -429,6 +429,27 @@ var selectedProvider = [];
    const providerTags = document.getElementById('provider-tags');
    const regionDropdown = document.getElementById('region-dropdown');
    const regionDiv = document.getElementById('region-dropdown-div');
+   const selectBox = document.getElementById('year-select');
+   // loop through years
+   if(selectBox)
+   {
+      addYearList();
+   }
+   function addYearList(){
+      var min = new Date().getFullYear() - 100,
+      max = new Date().getFullYear() + 2;
+      console.log(max);
+      console.log('min ' + min);
+      for (var i = max; i >= min; i--) {
+         // create option element
+         var option = document.createElement('option');
+         // add value and text name
+         option.value = i;
+         option.innerHTML = i;
+         // add the option element to the selectbox
+         selectBox.appendChild(option);
+      }
+   }
          /* TOOLTIPS */
    /* $(function(){
       $('[data-toggle="tooltip"]').tooltip();
@@ -474,15 +495,18 @@ var selectedProvider = [];
 
    if(filterBtn)
    filterBtn.addEventListener('click', () => {
+   let selectedYear = selectBox.value;
+   let YearString = '';
    let genreString = (selectedGenre.length !== 0) ? '&with_genres=' +encodeURI(selectedGenre.join(',')) : '';
    let providerString = (selectedProvider.length !== 0) ? '&watch_region=' + regionDropdown.value + '&with_watch_providers=' +encodeURI(selectedProvider.join('|')) : '';
    if(movie_list){
-      getMovies(1, discoMv_URL + '&sort_by=' + sortDropdown.value + genreString + providerString);
+      YearString = (selectBox.selectedIndex > 0) ? '&primary_release_year=' + selectedYear :'';
+      getMovies(1, discoMv_URL + '&sort_by=' + sortDropdown.value + genreString + providerString + YearString);
    }
    else if(tv_list) {
-      getMovies(1, discoTv_URL + '&sort_by=' + sortDropdown.value + genreString + providerString);
-      console.log(discoTv_URL + '&sort_by=' + sortDropdown.value + genreString + providerString);
-   }
+      YearString = (selectBox.selectedIndex > 0) ? '&first_air_date_year=' + selectedYear :'';
+      getMovies(1, discoTv_URL + '&sort_by=' + sortDropdown.value + genreString + providerString + YearString);
+      }
    });
 
             /* ADD GENRE BUTTONS */
@@ -726,7 +750,7 @@ function showTrending(data) {
    const movieLink = current.substr(0 , lastChar) + '/movie';
    const tvLink =  current.substr(0 , lastChar) + '/tv';
    data.forEach(movie => {
-      const {title, poster_path, vote_average, overview, id , name, media_type, genre_ids} = movie;
+      const {title, poster_path, vote_average, overview, id , name, media_type, genre_ids, release_date, first_air_date } = movie;
       const movieCard = document.createElement('div');
       let poster_image = '';
       let movie_title = '';
@@ -754,7 +778,14 @@ function showTrending(data) {
             });
          }
       }
-
+      if (!isNaN(Date.parse(release_date))) {
+         let date = release_date.split('-');
+         var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+      } 
+      else if (!isNaN(Date.parse(first_air_date))) {
+         let date = first_air_date.split('-');
+         var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+      } 
       (media_type == 'tv') ? link = tvLink : link = movieLink;
       (title) ? movie_title = title: movie_title = name;
       (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
@@ -764,13 +795,16 @@ function showTrending(data) {
       <div class="card bg-custom-1 text-white card-size mx-2">
          <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${movie_title}">
          <div class="card-body ">
-            <div class="mb-2 mt-2 d-flex justify-content-evenly">
-               <p class="card-title text-truncate mt-1">${movie_title}</p>
-               <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${vote_average}</span>
+            <div class="mb-2 mt-2 d-flex flex-column justify-content-evenly">
+               <div class="d-flex justify-content-between align-items-center">
+                  <p class="card-title text-truncate mt-1">${movie_title}</p>
+                  <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${vote_average}</span>
+               </div>
+               <small class="card-title text-truncate">${formattedDate}</small>            
             </div>
             <a onclick="movieSelected(${id},'${media_type}')" class="d-flex overview-text text-white rounded-3" href="${link + '?id=' + id + '&media_type=' + media_type}">
                <div class=" overview-div">
-               <div class="py-3 px-2 mb-2 d-flex flex-column text-center bg-custom-1">
+               <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
                <strong>${movie_title}</strong>
                <small>${genresArr.join(', ')}</small>
                </div>
@@ -798,7 +832,7 @@ function showTopGross(data) {
       var lastChar = current.indexOf('/', 7);
       const movieLink = current.substr(0 , lastChar) + '/movie';
       data.forEach(movie => {
-         const {title, poster_path, vote_average, overview, id, genre_ids} = movie;
+         const {title, poster_path, vote_average, overview, id, genre_ids, release_date} = movie;
          const movieCard = document.createElement('div');
          let poster_image = '';
          let genresArr = [];
@@ -812,19 +846,26 @@ function showTopGross(data) {
                })
             });
          }
+         if (!isNaN(Date.parse(release_date))) {
+            let date = release_date.split('-');
+            var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+         } 
          (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
          movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
          movieCard.innerHTML = `
             <div class="card bg-custom-1 text-white card-size mx-2">
             <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${title}">
             <div class="card-body ">
-               <div class="mb-2 mt-2 d-flex justify-content-evenly">
-                  <p class="card-title text-truncate mt-1">${title}</p>
-                  <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${vote_average}</span>
+               <div class="mb-2 mt-2 d-flex flex-column justify-content-evenly">
+                  <div class="d-flex justify-content-between align-items-center">
+                     <p class="card-title text-truncate mt-1">${title}</p>
+                     <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${vote_average}</span>
+                  </div>
+                  <small class="card-title text-truncate">${formattedDate}</small>
                </div>
-               <a class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=movie'}">
+               <a onclick="movieSelected(${id},'movie')" class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=movie'}">
                   <div class=" overview-div">
-                     <div class="py-3 px-2 mb-2 d-flex flex-column text-center bg-custom-1">
+                     <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
                         <strong>${title}</strong>
                         <small>${genresArr.join(', ')}</small>
                      </div>
@@ -860,6 +901,7 @@ function getMovies(currentPage, url) {
    }
    else if(tv_list){
       url += '&page=' + currentPage;
+      console.log(url);
       fetch(url).then(res=> res.json()).then(data => {
          if(data.results.length != 0)
          showMovies(data.results, url, data.total_pages, data.page);
@@ -884,7 +926,7 @@ function showMovies(data,url,maxPage,currentPage) {
       const tvLink = current.substr(0 , lastChar) + '/tv';
       if(movie_list || main){
       data.forEach(movie => {
-         const {title, poster_path, vote_average, overview, id, genre_ids} = movie;
+         const {title, poster_path, vote_average, overview, id, genre_ids, release_date} = movie;
          const movieCard = document.createElement('div');
          let poster_image = '';
          let genresArr = [];
@@ -898,19 +940,26 @@ function showMovies(data,url,maxPage,currentPage) {
             })
          });
          }
+         if (!isNaN(Date.parse(release_date))) {
+            let date = release_date.split('-');
+            var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+         }   
          (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
          movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
          movieCard.innerHTML = `
          <div class="card bg-custom-1 text-white card-size mx-2">
          <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${title}">
          <div class="card-body ">
-            <div class="mb-2 mt-2 d-flex justify-content-evenly">
-               <p class="card-title text-truncate mt-1">${title}</p>
-               <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${vote_average}</span>
+            <div class="mb-2 mt-2 d-flex flex-column justify-content-evenly">
+               <div class="d-flex justify-content-between align-items-center">
+                  <p class="card-title text-truncate">${title}</p>
+                  <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${vote_average}</span>
+               </div>
+               <small class="card-title text-truncate">${formattedDate}</small>
             </div>
             <a onclick="movieSelected(${id},'movie')" class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=movie'}">
                <div class=" overview-div">
-                  <div class="py-3 px-2 mb-2 d-flex flex-column text-center bg-custom-1">
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
                   <strong>${title}</strong>
                   <small>${genresArr.join(', ')}</small>
                   </div>
@@ -929,7 +978,7 @@ function showMovies(data,url,maxPage,currentPage) {
       }
       else if(tv_list){
          data.forEach(movie => {
-            const {name, poster_path, vote_average, overview, id, genre_ids } = movie;
+            const {name, poster_path, vote_average, overview, id, genre_ids, first_air_date } = movie;
             const movieCard = document.createElement('div');
             let poster_image = '';
             let genresArr = [];
@@ -943,6 +992,10 @@ function showMovies(data,url,maxPage,currentPage) {
                })
             });
             }
+            if (!isNaN(Date.parse(first_air_date))) {
+               let date = first_air_date.split('-');
+               var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+            }   
             var rounded_rating = Math.round(vote_average * 10) / 10;
             (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
             movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
@@ -950,13 +1003,17 @@ function showMovies(data,url,maxPage,currentPage) {
             <div class="card bg-custom-1 text-white card-size mx-2">
             <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${name}">
             <div class="card-body ">
-               <div class="mb-2 mt-2 d-flex justify-content-evenly">
-                  <p class="card-title text-truncate mt-1">${name}</p>
+            <div class="mb-2 mt-2 d-flex flex-column justify-content-evenly">
+               <div class="d-flex justify-content-between align-items-center">
+                  <p class="card-title text-truncate">${name}</p>
                   <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${rounded_rating}</span>
                </div>
+               <small class="card-title text-truncate">${formattedDate}</small>
+               </div>
+
                <a class="d-flex overview-text text-white rounded-3" href="${tvLink + '?id=' + id + '&media_type=tv'}">
                   <div class=" overview-div">
-                     <div class="py-3 px-2 mb-2 d-flex flex-column text-center bg-custom-1">
+                     <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
                         <strong>${name}</strong>
                         <small>${genresArr.join(', ')}</small>
                      </div>
@@ -980,7 +1037,7 @@ function showMovies(data,url,maxPage,currentPage) {
          
          if(i == maxPage && i != currentPage)
          {
-            if(currentPage < maxPage)
+            if(currentPage < maxPage && maxPage>10)
             page_button.textContent = 'Last';
             page_button.onclick = function () {getMovies(i,url)};  
             page_container.appendChild(page_button);
@@ -1029,8 +1086,10 @@ function getDetails() {
    var movieId, tvId, personId = '';
    var queryArr = window.location.href.split('=');
    if(detail_container || tv_detail_container || person_detail_container){
-   var movId = queryArr[1].slice(0, queryArr[1].indexOf('&'));}
+   var movId = queryArr[1].slice(0, queryArr[1].indexOf('&'));
    var movieType = queryArr[queryArr.length-1];
+   (movieType === 'tv' || movieType === 'movie' || movieType === 'person') ? '' : movieType = queryArr[2].slice(0,queryArr[2].indexOf('&'));
+   }
    
    if(movieType == 'movie')
    {
@@ -1048,7 +1107,6 @@ function getDetails() {
    if(detail_container){
       url = MOVIE_URL + movieId + '?' + API_KEY;
       fetch(url).then(res=> res.json()).then(data => {
-         console.log(data);
          showDetails(data); 
          getCredits();
          getRelatedMovies();
@@ -1058,7 +1116,7 @@ function getDetails() {
    {
          url = TV_URL + tvId + '?' + API_KEY;                                                    
          fetch(url).then(res=> res.json()).then(data => {
-            console.log(data);
+            console.log(url);
             showDetails(data);
             getCredits();
             getRelatedMovies();
@@ -1081,6 +1139,10 @@ function showDetails(data) {
    const movieDetails = document.createElement('div');
    let poster_image = '';
    let homep = '';
+   if (!isNaN(Date.parse(release_date))) {
+      let date = release_date.split('-');
+      var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+   }   
    if(homepage){
    homep = `<a class="ms-3 mb-3 btn btn-info" href="${homepage}" target="_blank">Visit Homepage</a>`;}
    const genresArr = [];
@@ -1105,7 +1167,7 @@ function showDetails(data) {
          </div>
             <ul class="list-group shadow">
                <li class="list-group-item list-group-item-dark"><strong>Genre:</strong> ${genresArr.join(',')}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Released:</strong> ${release_date}</li>
+               <li class="list-group-item list-group-item-dark"><strong>Released:</strong> ${formattedDate}</li>
                <li class="list-group-item list-group-item-dark"><strong>Status:</strong> ${status}</li>
                <li class="list-group-item list-group-item-dark"><strong>Budget:</strong> $${thousands_separators(budget)}</li>
                <li class="list-group-item list-group-item-dark"><strong>Revenue:</strong> $${thousands_separators(revenue)}</li>
@@ -1123,6 +1185,14 @@ function showDetails(data) {
    const movieDetails = document.createElement('div');
    let poster_image = '';
    let homep = '';
+   if (!isNaN(Date.parse(first_air_date))) {
+      let date = first_air_date.split('-');
+      var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+      if(!isNaN(Date.parse(last_air_date))){
+         let date = last_air_date.split('-');
+         var formattedDate1 = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+      }
+   }   
    if(homepage){
    homep = `<a class="ms-3 mb-3 btn btn-info" href="${homepage}" target="_blank">Visit Homepage</a>`;}
    const genresArr = [];
@@ -1147,8 +1217,8 @@ function showDetails(data) {
          </div>
             <ul class="list-group shadow">
                <li class="list-group-item list-group-item-dark"><strong>Genre:</strong> ${genresArr.join(',')}</li>
-               <li class="list-group-item list-group-item-dark"><strong>First Air:</strong> ${first_air_date}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Last Air:</strong> ${last_air_date}</li>
+               <li class="list-group-item list-group-item-dark"><strong>First Air:</strong> ${formattedDate}</li>
+               <li class="list-group-item list-group-item-dark"><strong>Last Air:</strong> ${formattedDate1}</li>
                <li class="list-group-item list-group-item-dark"><strong>Number of Episode(s):</strong> ${number_of_episodes}</li>
                <li class="list-group-item list-group-item-dark"><strong>Number of Season(s):</strong> ${number_of_seasons}</li>
                <li class="list-group-item list-group-item-dark"><strong>Status:</strong> ${status}</li>
@@ -1162,16 +1232,30 @@ function showDetails(data) {
    }
    else if(person_detail_container){
       
-      const {name, also_known_as, birthday, gender, place_of_birth, profile_path, known_for_department, biography } = data;
+      const {name, also_known_as, birthday, deathday, gender, place_of_birth, profile_path, known_for_department, biography } = data;
       document.title = name + ' - WutuWatch';
    const movieDetails = document.createElement('div');
    let aka = '';
    let ginger = 'Undecided';
    let age = '';
+   let dage = '';
+   var dth = '';
    if(birthday != undefined) {
+   let birthdate = birthday.split('-');
+   var formattedBirthday = moment(birthdate[0]+'-'+birthdate[1]+'-'+birthdate[2]).format('MMMM DD, YYYY');
    const ageDiffM = Date.now() - new Date(birthday).getTime();
    const ageDate = new Date(ageDiffM);
+   if(deathday == undefined)
    age = " (" + Math.abs(ageDate.getUTCFullYear() - 1970) + " years old)";
+   }
+
+   if(deathday != undefined)
+   {  const ageDiffM = new Date(deathday).getTime() - new Date(birthday).getTime();
+      const ageDate = new Date(ageDiffM);
+      let deathdate = deathday.split('-');
+      var formattedDeathday = moment(deathdate[0]+'-'+deathdate[1]+'-'+deathdate[2]).format('MMMM DD, YYYY');
+      dage = " (" + Math.abs(ageDate.getUTCFullYear() - 1970) + " years old)";
+      dth = '<li class="list-group-item list-group-item-dark"><strong>Died:</strong> ' + formattedDeathday + dage + '</li>'
    }
 
    (gender == 1) ? ginger = 'Female' : ginger = 'Male';
@@ -1187,7 +1271,8 @@ function showDetails(data) {
          <h3>${name}</h3>
          <p class="custom-color-5 fst-italic">${aka}</p>
          <ul class="list-group shadow mb-3">
-               <li class="list-group-item list-group-item-dark"><strong>Birthday:</strong> ${birthday + age }</li>
+               <li class="list-group-item list-group-item-dark"><strong>Birthday:</strong> ${formattedBirthday + age }</li>
+               ${dth}
                <li class="list-group-item list-group-item-dark"><strong>Gender:</strong> ${ginger}</li>
                <li class="list-group-item list-group-item-dark"><strong>Place of Birth::</strong> ${place_of_birth}</li>
                <li class="list-group-item list-group-item-dark"><strong>Known For:</strong> ${known_for_department}</li>
@@ -1205,7 +1290,7 @@ function getRelatedMovies()
    if(detail_container || tv_detail_container || person_detail_container){
    var movId = queryArr[1].slice(0, queryArr[1].indexOf('&'));}
    var movieType = queryArr[queryArr.length-1];
-   
+   (movieType === 'tv' || movieType === 'movie' || movieType === 'person') ? '' : movieType = queryArr[2].slice(0,queryArr[2].indexOf('&'));
    if(movieType == 'movie')
    {
       movieId = movId;
@@ -1248,7 +1333,7 @@ function showRelatedMovies(data, total_results)
       else{
       if(related_movies){
          data.forEach(movie => {
-         const {title, poster_path, vote_average, overview, id, media_type, genre_ids } = movie;
+         const {title, poster_path, vote_average, overview, id, media_type, genre_ids, release_date } = movie;
          const movieCard = document.createElement('div');
          let poster_image = '';
          let genresArr = [];
@@ -1263,19 +1348,26 @@ function showRelatedMovies(data, total_results)
             });
          }
          var rounded_rating = Math.round(vote_average * 10) / 10;
+         if (!isNaN(Date.parse(release_date))) {
+            let date = release_date.split('-');
+            var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+         }   
          (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
          movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
          movieCard.innerHTML = `
          <div class="card bg-custom-1 text-white card-size mx-2">
          <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${title}">
          <div class="card-body ">
-            <div class="mb-2 mt-2 d-flex justify-content-evenly">
-               <p class="card-title text-truncate mt-1">${title}</p>
-               <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${rounded_rating}</span>
+            <div class="mb-2 mt-2 d-flex flex-column justify-content-evenly">
+               <div class="d-flex justify-content-between align-items-center">
+                  <p class="card-title text-truncate">${title}</p>
+                  <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${rounded_rating}</span>
+               </div>
+               <small class="card-title text-truncate">${formattedDate}</small>
             </div>
             <a onclick="movieSelected(${id},'${media_type}')" class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=' + media_type}">
                <div class=" overview-div">
-                  <div class="py-3 px-2 mb-2 d-flex flex-column text-center bg-custom-1">
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
                      <strong>${title}</strong>
                      <small>${genresArr.join(', ')}</small>
                   </div>
@@ -1291,7 +1383,7 @@ function showRelatedMovies(data, total_results)
       }
       else if(related_tv){
          data.forEach(movie => {
-         const {name, poster_path, vote_average, overview, id, genre_ids} = movie;
+         const {name, poster_path, vote_average, overview, id, genre_ids, first_air_date} = movie;
          const movieCard = document.createElement('div');
          let poster_image = '';
          let genresArr = [];
@@ -1306,19 +1398,26 @@ function showRelatedMovies(data, total_results)
             });
          }
          var rounded_rating = Math.round(vote_average * 10) / 10;
+         if (!isNaN(Date.parse(first_air_date))) {
+            let date = first_air_date.split('-');
+            var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+         }  
          (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
          movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
          movieCard.innerHTML = `
          <div class="card bg-custom-1 text-white card-size mx-2">
          <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${name}">
          <div class="card-body ">
-            <div class="mb-2 mt-2 d-flex justify-content-evenly">
-               <p class="card-title text-truncate mt-1">${name}</p>
-               <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${rounded_rating}</span>
+            <div class="mb-2 mt-2 d-flex flex-column justify-content-evenly">
+               <div class="d-flex justify-content-between align-items-center">
+                  <p class="card-title text-truncate">${name}</p>
+                  <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${rounded_rating}</span>
+               </div>
+               <small class="card-title text-truncate">${formattedDate}</small>
             </div>
             <a onclick="movieSelected(${id},'tv')" class="d-flex overview-text text-white rounded-3" href="${tvLink + '?id=' + id + '&media_type=tv'}">
                <div class=" overview-div">
-                  <div class="py-3 px-2 mb-2 d-flex flex-column text-center bg-custom-1">
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
                      <strong>${name}</strong>
                      <small>${genresArr.join(', ')}</small>
                   </div>
@@ -1341,7 +1440,8 @@ function getSimilar() {
    if(detail_container || tv_detail_container || person_detail_container){
    var movId = queryArr[1].slice(0, queryArr[1].indexOf('&'));}
    var movieType = queryArr[queryArr.length-1];
-   
+   (movieType === 'tv' || movieType === 'movie' || movieType === 'person') ? '' : movieType = queryArr[2].slice(0,queryArr[2].indexOf('&'));
+
    if(movieType == 'movie')
    {
       movieId = movId;
@@ -1370,11 +1470,22 @@ function showSimilar(data){
       const tvLink = current.substr(0 , lastChar) + '/tv';
    if(related_movies){
       data.forEach(movie => {
-         const {title, poster_path, vote_average, overview, id, media_type } = movie;
+         const {title, poster_path, vote_average, overview, id, media_type,genre_ids } = movie;
          const movieCard = document.createElement('div');
          let poster_image = '';
          var rounded_rating = Math.round(vote_average * 10) / 10;
          (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+         let genresArr = [];
+         if(genre_ids.length >0){
+            genre_ids.forEach(id => {
+               genres.forEach(genre => {
+                  if(id == genre.id)
+                  {
+                     genresArr.push(genre.name);
+                  }
+               })
+            });
+         }
          movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
          movieCard.innerHTML = `
          <div class="card bg-custom-1 text-white card-size mx-2">
@@ -1386,7 +1497,10 @@ function showSimilar(data){
             </div>
             <a onclick="movieSelected(${id},'movie')" class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=movie'}">
                <div class=" overview-div">
-                  <div class="py-3 px-2 text-center bg-custom-1">${title}</div>
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
+                     <strong>${title}</strong>
+                     <small>${genresArr.join(', ')}</small>
+                  </div>
                   <div class="p-1"><p class="">${overview}</p></div>
                   <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
                </div>
@@ -1399,11 +1513,22 @@ function showSimilar(data){
    }
    else if(related_tv){
       data.forEach(movie => {
-         const {name, poster_path, vote_average, overview, id} = movie;
+         const {name, poster_path, vote_average, overview, id,genre_ids} = movie;
          const movieCard = document.createElement('div');
          let poster_image = '';
          var rounded_rating = Math.round(vote_average * 10) / 10;
          (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+         let genresArr = [];
+         if(genre_ids.length >0){
+            genre_ids.forEach(id => {
+               tv_genres.forEach(genre => {
+                  if(id == genre.id)
+                  {
+                     genresArr.push(genre.name);
+                  }
+               })
+            });
+         }
          movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
          movieCard.innerHTML = `
          <div class="card bg-custom-1 text-white card-size mx-2">
@@ -1415,7 +1540,10 @@ function showSimilar(data){
             </div>
             <a onclick="movieSelected(${id},'tv')" class="d-flex overview-text text-white rounded-3" href="${tvLink + '?id=' + id + '&media_type=tv'}">
                <div class=" overview-div">
-                  <div class="py-3 px-2 text-center bg-custom-1">${name}</div>
+               <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
+                  <strong>${name}</strong>
+                  <small>${genresArr.join(', ')}</small>
+               </div>
                   <div class="p-1 bg-overlay-1"><p class="">${overview}</p></div>
                   <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
                </div>
@@ -1441,8 +1569,9 @@ function getTrailer(){
    var movieId, tvId = '';
    var queryArr = window.location.href.split('=');
    if(detail_container || tv_detail_container || person_detail_container){
-   var movId = queryArr[1].slice(0, queryArr[1].indexOf('&'));}
-   var movieType = queryArr[queryArr.length-1];
+      var movId = queryArr[1].slice(0, queryArr[1].indexOf('&'));}
+      var movieType = queryArr[queryArr.length-1];
+      (movieType === 'tv' || movieType === 'movie' || movieType === 'person') ? '' : movieType = queryArr[2].slice(0,queryArr[2].indexOf('&'));
    
    if(movieType == 'movie'){
       movieId = movId;
@@ -1527,8 +1656,9 @@ function getCredits(){
    var movieId, tvId, personId = '';
    var queryArr = window.location.href.split('=');
    if(detail_container || tv_detail_container || person_detail_container){
-   var movId = queryArr[1].slice(0, queryArr[1].indexOf('&'));}
-   var movieType = queryArr[queryArr.length-1];
+      var movId = queryArr[1].slice(0, queryArr[1].indexOf('&'));}
+      var movieType = queryArr[queryArr.length-1];
+      (movieType === 'tv' || movieType === 'movie' || movieType === 'person') ? '' : movieType = queryArr[2].slice(0,queryArr[2].indexOf('&'));
    
    if(movieType == 'movie')
    {
@@ -1624,7 +1754,7 @@ function showCredits(crews, casts) {
             credit_label.classList.add('mt-3');
             if(counter == 0)
             {
-               credit_label.innerText = 'Credited Shows/Movies';
+               credit_label.innerText = 'Casts & Director';
                $(credit_label).insertBefore(tv_casts_container);
                counter++;
             }
@@ -1650,7 +1780,7 @@ function showCredits(crews, casts) {
          credit_label.classList.add('mt-3');
          if(counter == 0)
          { 
-            credit_label.innerText = 'Casts/Director';
+            credit_label.innerText = 'Casts & Director';
             $(credit_label).insertBefore(tv_casts_container);
             counter++;
          }
@@ -1670,11 +1800,22 @@ function showCredits(crews, casts) {
    }
    else if(person_casts_container){
       casts.slice(0 , 20).forEach(cast => {
-         const {id,title,name, overview,poster_path, vote_average, character ,media_type} = cast;
+         const {id,title,name, overview,poster_path, vote_average, character ,media_type,genre_ids} = cast;
          if(media_type == 'movie'){
             const movieCard = document.createElement('div');
             let poster_image = '';
             var rounded_rating = Math.round(vote_average * 10) / 10;
+            let genresArr = [];
+            if(genre_ids.length >0){
+               genre_ids.forEach(id => {
+                  genres.forEach(genre => {
+                     if(id == genre.id)
+                     {
+                        genresArr.push(genre.name);
+                     }
+                  })
+               });
+            }
             let credit_label = document.createElement('h5');
             credit_label.classList.add('mt-3');
             if(counter == 0)
@@ -1698,7 +1839,10 @@ function showCredits(crews, casts) {
                </div>
                <a onclick="movieSelected(${id},'${media_type}')" class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=' + media_type}">
                   <div class=" overview-div">
-                     <div class="py-3 px-2 text-center bg-custom-1">${title}</div>
+                     <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
+                        <strong>${title}</strong>
+                        <small>${genresArr.join(', ')}</small>
+                     </div>
                      <div class="p-1 bg-overlay-1"><p class="">${overview}</p></div>
                      <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
                   </div>
@@ -1712,6 +1856,17 @@ function showCredits(crews, casts) {
          const movieCard = document.createElement('div');
          let poster_image = '';
          var rounded_rating = Math.round(vote_average * 10) / 10;
+         let genresArr = [];
+         if(genre_ids.length >0){
+            genre_ids.forEach(id => {
+               tv_genres.forEach(genre => {
+                  if(id == genre.id)
+                  {
+                     genresArr.push(genre.name);
+                  }
+               })
+            });
+         }
          (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
          movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
          movieCard.innerHTML = `
@@ -1727,7 +1882,10 @@ function showCredits(crews, casts) {
             </div>
             <a onclick="movieSelected(${id},'${media_type}')" class="d-flex overview-text text-white rounded-3" href="${tvLink + '?id=' + id + '&media_type=' + media_type}">
                <div class=" overview-div">
-                  <div class="py-3 px-2 text-center bg-custom-1">${name}</div>
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
+                     <strong>${name}</strong>
+                     <small>${genresArr.join(', ')}</small>
+                  </div>
                   <div class="p-1 bg-overlay-1"><p class="">${overview}</p></div>
                   <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
                </div>
@@ -1739,11 +1897,22 @@ function showCredits(crews, casts) {
          }
       });
       crews.slice(0 , 20).forEach(crew => { 
-         const {id,title,name, overview,poster_path, vote_average, job ,media_type} = crew;
+         const {id,title,name, overview,poster_path, vote_average, job ,media_type, genre_ids} = crew;
          if(media_type == 'movie' && job == 'Director'){
          const movieCard = document.createElement('div');
          let poster_image = '';
          var rounded_rating = Math.round(vote_average * 10) / 10;
+         let genresArr = [];
+         if(genre_ids.length >0){
+            genre_ids.forEach(id => {
+               genres.forEach(genre => {
+                  if(id == genre.id)
+                  {
+                     genresArr.push(genre.name);
+                  }
+               })
+            });
+         }
          let credit_label = document.createElement('h5');
          credit_label.classList.add('mt-3');
          if(counter == 0)
@@ -1767,7 +1936,10 @@ function showCredits(crews, casts) {
             </div>
             <a onclick="movieSelected(${id},'${media_type}')" class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=' + media_type}">
                <div class=" overview-div">
-                  <div class="py-3 px-2 text-center bg-custom-1">${title}</div>
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
+                     <strong>${title}</strong>
+                     <small>${genresArr.join(', ')}</small>
+                  </div>
                   <div class="p-1 bg-overlay-1"><p class="">${overview}</p></div>
                   <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
                </div>
@@ -1782,6 +1954,17 @@ function showCredits(crews, casts) {
             const movieCard = document.createElement('div');
             let poster_image = '';
             var rounded_rating = Math.round(vote_average * 10) / 10;
+            let genresArr = [];
+            if(genre_ids.length >0){
+               genre_ids.forEach(id => {
+                  tv_genres.forEach(genre => {
+                     if(id == genre.id)
+                     {
+                        genresArr.push(genre.name);
+                     }
+                  })
+               });
+            }
             let credit_label = document.createElement('h5');
             credit_label.classList.add('mt-3');
             if(counter == 0)
@@ -1794,18 +1977,21 @@ function showCredits(crews, casts) {
             movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
             movieCard.innerHTML = `
             <div class="card bg-custom-1 text-white card-size mx-2">
-            <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${title}">
+            <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${name}">
             <div class="card-body ">
                <div class="mb-2 mt-2 d-flex justify-content-evenly">
                <div class='d-flex flex-column text-truncate'>
-                  <p class="card-title text-truncate mt-1">${title}</p>
+                  <p class="card-title text-truncate mt-1">${name}</p>
                   <small>${job}</small>
                </div>
                   <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${rounded_rating}</span>
                </div>
                <a onclick="movieSelected(${id},'${media_type}')" class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=' + media_type}">
                   <div class=" overview-div">
-                     <div class="py-3 px-2 text-center bg-custom-1">${title}</div>
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
+                     <strong>${name}</strong>
+                     <small>${genresArr.join(', ')}</small>
+                  </div>
                      <div class="p-1 bg-overlay-1"><p class="">${overview}</p></div>
                      <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
                   </div>
@@ -1815,42 +2001,6 @@ function showCredits(crews, casts) {
             `;
             person_casts_container.appendChild(movieCard);
          }
-         /* else if(media_type == 'tv') {
-         const movieCard = document.createElement('div');
-         let poster_image = '';
-         var rounded_rating = Math.round(vote_average * 10) / 10;
-         if(poster_path == null)
-         {
-            poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
-         }
-         else
-         {
-            poster_image = IMG_URL + poster_path;
-         }
-
-         movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
-         movieCard.innerHTML = `
-         <div class="card bg-custom-1 text-white card-size mx-2">
-         <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${name}">
-         <div class="card-body ">
-            <div class="mb-2 mt-2 d-flex justify-content-evenly">
-            <div class='d-flex flex-column text-truncate'>
-               <p class="card-title text-truncate mt-1">${name}</p>
-            </div>
-               <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${rounded_rating}</span>
-            </div>
-            <a onclick="movieSelected(${id},'${media_type}')" class="d-flex overview-text text-white rounded-3" href="${tvLink}">
-               <div class=" overview-div">
-                  <div class="py-3 px-2 text-center bg-custom-1">${name}</div>
-                  <div class="p-1 bg-overlay-1"><p class="">${overview}</p></div>
-                  <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
-               </div>
-            </a>
-         </div>
-         </div>
-         `;
-         person_casts_container.appendChild(movieCard);
-         } */
          });
    } 
    }
@@ -1886,7 +2036,6 @@ function showCredits(crews, casts) {
       }
       if(search_key)
       {/* MOVIE SEARCH URL */
-         console.log('asdadaddada ' + search_Type);
          getSearchResult(multiSearch, movieSearch,tvSearch,personSearch,search_Type);
       }
    }
@@ -1947,6 +2096,7 @@ function showSearchResult(data, search_Type,url,maxPage,currentPage) {
    page_container.innerHTML = '';
       var current = window.location.href;
       var lastChar = current.indexOf('/', 7);
+      console.log(lastChar + ' idk');
       const movieLink = current.substr(0 , lastChar) + '/movie';
       const tvLink = current.substr(0 , lastChar) + '/tv';
       const personLink = current.substr(0 , lastChar) + '/person';
@@ -1985,22 +2135,43 @@ function showSearchResult(data, search_Type,url,maxPage,currentPage) {
       if(search_Type == 'Movies'){
       data.forEach(movie => {
          
-         const {title, poster_path, vote_average, overview, id } = movie;
+         const {title, poster_path, vote_average, overview, id,genre_ids, release_date } = movie;
          const movieCard = document.createElement('div');
          let poster_image = '';
          (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+         let genresArr = [];
+         if(genre_ids.length >0){
+            genre_ids.forEach(id => {
+               genres.forEach(genre => {
+                  if(id == genre.id)
+                  {
+                     genresArr.push(genre.name);
+                  }
+               })
+            });
+         }
+         if (!isNaN(Date.parse(release_date))) {
+            let date = release_date.split('-');
+            var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+         } 
          movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
          movieCard.innerHTML = `
          <div class="card bg-custom-1 text-white card-size">
                   <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${title}">
             <div class="card-body ">
-               <div class="mb-2 mt-2 d-flex justify-content-evenly">
-                  <p class="card-title text-truncate mt-1">${title}</p>
-                  <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${vote_average}</span>
+               <div class="mb-2 mt-2 d-flex flex-column justify-content-evenly">
+                  <div class="d-flex justify-content-between align-items-center">
+                     <p class="card-title text-truncate mt-1">${title}</p>
+                     <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${vote_average}</span>
+                  </div>
+                  <small class="card-title text-truncate">${formattedDate}</small>
                </div>
                <a onclick="movieSelected(${id}, 'movie')" class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=movie'}">
                   <div class=" overview-div">
-                     <div class="py-3 px-2 mb-2 text-center bg-custom-1">${title}</div>
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
+                     <strong>${title}</strong>
+                     <small>${genresArr.join(', ')}</small>
+                  </div>
                      <div class="p-1"><p class="">${overview}</p></div>
                      <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
                   </div>
@@ -2014,23 +2185,44 @@ function showSearchResult(data, search_Type,url,maxPage,currentPage) {
       else if(search_Type == 'TV Shows')
       {
          data.forEach(movie => {
-            const {name, poster_path, vote_average, overview, id} = movie;
+            const {name, poster_path, vote_average, overview, id,genre_ids, first_air_date} = movie;
             const movieCard = document.createElement('div');
             let poster_image = '';
             var rounded_rating = Math.round(vote_average * 10) / 10;
             (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+            let genresArr = [];
+            if(genre_ids.length >0){
+               genre_ids.forEach(id => {
+                  tv_genres.forEach(genre => {
+                     if(id == genre.id)
+                     {
+                        genresArr.push(genre.name);
+                     }
+                  })
+               });
+            }
+            if (!isNaN(Date.parse(first_air_date))) {
+               let date = first_air_date.split('-');
+               var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+            }  
             movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
             movieCard.innerHTML = `
             <div class="card bg-custom-1 text-white card-size mx-2">
             <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${name}">
             <div class="card-body ">
-               <div class="mb-2 mt-2 d-flex justify-content-evenly">
-                  <p class="card-title text-truncate mt-1">${name}</p>
-                  <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${rounded_rating}</span>
+               <div class="mb-2 mt-2 d-flex flex-column justify-content-evenly">
+                  <div class="d-flex justify-content-between align-items-center">
+                     <p class="card-title text-truncate">${name}</p>
+                     <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${rounded_rating}</span>
+                  </div>
+                  <small class="card-title text-truncate">${formattedDate}</small>
                </div>
                <a onclick="movieSelected(${id},'tv')" class="d-flex overview-text text-white rounded-3" href="${tvLink + '?id=' + id + '&media_type=tv'}">
                   <div class=" overview-div">
-                     <div class="py-3 px-2 mb-2 text-center bg-custom-1">${name}</div>
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
+                     <strong>${name}</strong>
+                     <small>${genresArr.join(', ')}</small>
+                  </div>
                      <div class="p-1"><p class="">${overview}</p></div>
                      <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
                   </div>
@@ -2067,7 +2259,7 @@ function showSearchResult(data, search_Type,url,maxPage,currentPage) {
                   </div>
                   <a onclick="movieSelected(${id},'person')" class="d-flex overview-text text-white rounded-3" href="${personLink + '?id=' + id + '&media_type=person'}">
                      <div class=" overview-div">
-                        <div class="py-3 px-2 mb-2 text-center bg-custom-1">${name}</div>
+                        <div class="py-3 px-2 text-center bg-custom-1">${name}</div>
                         <div class="p-1"><p class="">Known For ${knownList}</p></div>
                         <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
                      </div>
@@ -2121,3 +2313,125 @@ function showSearchResult(data, search_Type,url,maxPage,currentPage) {
          getKeyword(e.target.textContent);
       }
    });}
+
+   const postedFrom = document.getElementsByName('comment-from');
+   const movieThumbnail = document.getElementsByName('thumbnail');
+   if(postedFrom){
+      getName();
+   }
+   async function getName(){
+      for (var i=0; i < postedFrom.length; i++){
+      var link = postedFrom[i].getAttribute('href');
+      var queryArr = link.split('=');
+      var media_type = queryArr[queryArr.length-1];
+      var movId = queryArr[1].slice(0, queryArr[1].indexOf('&'));
+      if(media_type == 'movie')
+      {
+         url = MOVIE_URL + movId + '?' + API_KEY;
+      }
+      else if( media_type =='tv')
+      {
+         url = TV_URL + movId + '?' + API_KEY;
+      }
+      movieThumbnail[i].src = await fetch(url).then(res=> res.json()).then(data => {
+         if(data.poster_path)
+         return IMG_URL + data.poster_path;
+         else
+         return 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+      });
+      postedFrom[i].innerText = await fetch(url).then(res=> res.json()).then(data => {
+         if(data.title)
+         return data.title + ' - Movie';
+         else
+         return data.name + ' - TV Show';
+      });
+      
+      }
+   }
+   const movie_card = document.getElementsByName('movie-card');
+   if(movie_card)
+   {
+      getWatchlist();
+   }
+   async function getWatchlist(){
+      const poster_img = document.getElementsByName('poster-img');
+      const thumbnail_title = document.getElementsByName('thumbnail-title');
+      const movie_rating = document.getElementsByName('rating');
+      const movie_link = document.getElementsByName('movie-link');
+      const overview_title = document.getElementsByName('overview-title');
+      const genres = document.getElementsByName('genres');
+      const overview = document.getElementsByName('overview');
+      const date_released = document.getElementsByName('date-released');
+      for(var i=0; i < movie_card.length; i++){
+         let link = movie_link[i].getAttribute('href');
+         let queryArr = link.split('=');
+         let media_type = queryArr[queryArr.length-1];
+         let movId = queryArr[1].slice(0, queryArr[1].indexOf('&'));
+         let rating = '';
+         let genresArr = [];
+         if(media_type == 'movie')
+         {
+            url = MOVIE_URL + movId + '?' + API_KEY;
+         }
+         else if( media_type =='tv')
+         {
+            url = TV_URL + movId + '?' + API_KEY;
+         }
+
+         poster_img[i].src = await fetch(url).then(res=> res.json()).then(data => {
+            if(data.poster_path)
+            return IMG_URL + data.poster_path;
+            else
+            return 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+         });
+
+         thumbnail_title[i].innerText = await fetch(url).then(res=> res.json()).then(data => {
+            if(data.title)
+            return data.title;
+            else
+            return data.name;
+         });
+
+         rating = await fetch(url).then(res=> res.json()).then(data => {
+            return data.vote_average;
+         });
+
+         movie_rating[i].innerText = rating;
+         movie_rating[i].classList.add(getColor(rating));
+
+         overview_title[i].innerText = await fetch(url).then(res=> res.json()).then(data => {
+            if(data.title)
+            return data.title;
+            else
+            return data.name;
+         });
+         
+         
+         genres[i].innerText = await fetch(url).then(res=> res.json()).then(data => {
+            (data.genres).forEach(genre => {
+               genresArr.push(genre.name);
+            });
+            return genresArr.join(',');
+         });
+
+         overview[i].innerText = await fetch(url).then(res=> res.json()).then(data => {
+            return data.overview;
+         });
+
+         date_released[i].innerText = await fetch(url).then(res=> res.json()).then(data => {
+            if (!isNaN(Date.parse(data.release_date))) {
+               let date = data.release_date.split('-');
+               var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+            }   
+            else if (!isNaN(Date.parse(data.first_air_date))) {
+               let date = data.first_air_date.split('-');
+               var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+            }  
+            
+            return formattedDate;
+         });
+      }
+
+
+
+   }
