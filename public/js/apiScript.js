@@ -746,7 +746,7 @@ function getTrending(url){
 
 function showTrending(data) {
    var current = window.location.href;
-   var lastChar = current.indexOf('/', 7);
+   var lastChar = current.indexOf('/', 8);
    const movieLink = current.substr(0 , lastChar) + '/movie';
    const tvLink =  current.substr(0 , lastChar) + '/tv';
    data.forEach(movie => {
@@ -829,7 +829,7 @@ function getTopGross(url){
 
 function showTopGross(data) {
       var current = window.location.href;
-      var lastChar = current.indexOf('/', 7);
+      var lastChar = current.indexOf('/', 8);
       const movieLink = current.substr(0 , lastChar) + '/movie';
       data.forEach(movie => {
          const {title, poster_path, vote_average, overview, id, genre_ids, release_date} = movie;
@@ -921,7 +921,7 @@ function showMovies(data,url,maxPage,currentPage) {
       else if(tv_list){
       tv_list.innerHTML = '';}
       var current = window.location.href;
-      var lastChar = current.indexOf('/', 7);
+      var lastChar = current.indexOf('/', 8);
       const movieLink = current.substr(0 , lastChar) + '/movie';
       const tvLink = current.substr(0 , lastChar) + '/tv';
       if(movie_list || main){
@@ -1322,7 +1322,7 @@ function getRelatedMovies()
 function showRelatedMovies(data, total_results)
 {     
       var current = window.location.href;
-      var lastChar = current.indexOf('/', 7);
+      var lastChar = current.indexOf('/', 8);
       const movieLink = current.substr(0 , lastChar) + '/movie';
       const tvLink = current.substr(0 , lastChar) + '/tv';
       if(total_results >= 0 && total_results <=10)
@@ -1465,7 +1465,7 @@ function getSimilar() {
 
 function showSimilar(data){
       var current = window.location.href;
-      var lastChar = current.indexOf('/', 7);
+      var lastChar = current.indexOf('/', 8);
       const movieLink = current.substr(0 , lastChar) + '/movie';
       const tvLink = current.substr(0 , lastChar) + '/tv';
    if(related_movies){
@@ -1699,7 +1699,7 @@ function getCredits(){
 
 function showCredits(crews, casts) {
    var current = window.location.href;
-   var lastChar = current.indexOf('/', 7);
+   var lastChar = current.indexOf('/', 8);
    const movieLink = current.substr(0 , lastChar) + '/movie';
    const tvLink = current.substr(0 , lastChar) + '/tv';
    const personLink = current.substr(0 , lastChar) + '/person';
@@ -2095,7 +2095,7 @@ function showSearchResult(data, search_Type,url,maxPage,currentPage) {
    search_result.innerHTML = '';
    page_container.innerHTML = '';
       var current = window.location.href;
-      var lastChar = current.indexOf('/', 7);
+      var lastChar = current.indexOf('/', 8);
       console.log(lastChar + ' idk');
       const movieLink = current.substr(0 , lastChar) + '/movie';
       const tvLink = current.substr(0 , lastChar) + '/tv';
@@ -2296,7 +2296,7 @@ function showSearchResult(data, search_Type,url,maxPage,currentPage) {
       e.preventDefault();
       const searchTerm = search.value;
       var current = window.location.href;
-      var lastChar = current.indexOf('/', 7);
+      var lastChar = current.indexOf('/', 8);
       localStorage.setItem('Keyword', searchTerm);
       if(searchTerm)
       window.location = current.substr(0 , lastChar) + '/search?search_query=' + searchTerm;
