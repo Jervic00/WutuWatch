@@ -82,7 +82,7 @@
                                 <button type="submit" class="delete-button btn bg-danger px-2 py-0" style="color: white"><i class="fas fa-trash-alt"></i> Delete</button>
                             </form>
                         @endcan
-                @if (!$comment->LikedBy(auth()->user()))
+                @if (!$comment->LikedBy(auth()->user()) && $comment->user_id != auth()->user()->id)
                     <form action="{{ route('comments.likes', ['comment' => $comment->id]) }}" method="post">
                         @csrf
                         <button type="submit" class="like-button btn bg-custom-3 mx-2 px-2 py-0 "><i class="far fa-thumbs-up"></i> Commend</button>
