@@ -25,7 +25,7 @@ class CommentController extends Controller
         $media_type = $request->media_type;
         $comments = Comment::with(['user', 'likes'])->withCount('likes')->orderByDesc('likes_count')->latest()->where('movieId', $movieId)->where('media_type', $media_type)->paginate(5);
         $comments->withPath('?id=' .$movieId .'&media_type=' .$media_type);
-        $ratings = Comment::with(['user', 'likes'])->where('movieid', $movieId)->where('media_type', $media_type)->get();
+        $ratings = Comment::with(['user', 'likes'])->where('movieId', $movieId)->where('media_type', $media_type)->get();
         if($user_id){
         $single_comment = $ratings->where('user_id', auth()->user()->id)->first();
         $comment_count = Comment::with(['user'])->where('user_id', $user_id)->count();
