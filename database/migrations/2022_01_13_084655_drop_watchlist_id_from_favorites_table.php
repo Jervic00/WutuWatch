@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddWatchlistIdToFavoritesTable extends Migration
+class DropWatchlistIdFromFavoritesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddWatchlistIdToFavoritesTable extends Migration
     public function up()
     {
         Schema::table('favorites', function (Blueprint $table) {
-            $table->foreignId('watchlist_id')->references('id')->on('watchlists');
+            $table->dropColumn('watchlist_id');
         });
     }
 
@@ -26,7 +26,7 @@ class AddWatchlistIdToFavoritesTable extends Migration
     public function down()
     {
         Schema::table('favorites', function (Blueprint $table) {
-            $table->dropColumn('watchlist_id');
+            $table->string('watchlist_id');
         });
     }
 }

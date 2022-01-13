@@ -3,7 +3,7 @@
 <div class="user-review bg-overlay-1 d-flex align-items-top border mb-2">
         <div class="user-container border d-flex flex-column align-items-center p-2">
             <div class="user-avatar">
-                <img src="{{asset('users/images/' .$comment->user->profile_image )}}" class="profile-pic m-0" alt="Username">
+                <img src="{{asset('users/images/' .$comment->user->profile_image )}}" class="profile-pic m-0" alt="{{$comment->user->username}}">
             </div>
             <div class="user-details text-center p-2">
                     <a href="{{ route('users.profile', $comment->user)}}" class="text-decoration-none text-white" ><small>{{ $comment->user->username}}</small></a>
