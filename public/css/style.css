@@ -400,8 +400,8 @@ nav {
 .trailer-overlay {
     position: fixed;
     width: 70%;
-    height: 85%;
-    top: 50%;
+    height: 80%;
+    top: 47%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
     z-index: 10;
