@@ -438,8 +438,6 @@ var selectedProvider = [];
    function addYearList(){
       var min = new Date().getFullYear() - 100,
       max = new Date().getFullYear() + 2;
-      console.log(max);
-      console.log('min ' + min);
       for (var i = max; i >= min; i--) {
          // create option element
          var option = document.createElement('option');
@@ -636,7 +634,6 @@ var selectedProvider = [];
       else if(tv_list){
       provider_URL = BASE_URL + '/watch/providers/tv?api_key=661b929be88e845e186868fd7d0b11f7&watch_region=' + regionDropdown.value;
       }
-      console.log(provider_URL);
       fetch(provider_URL).then(res => res.json()).then(data => {
          showProvider(data.results);
       })
@@ -738,7 +735,6 @@ getKeyword();  /* FUNCTION FOR SEARCH BOX */
 function getTrending(url){
    if(main_Trending){
       fetch(url).then(res=> res.json()).then(data => {
-         console.log(data);
          showTrending(data.results);
       })
    }
@@ -891,8 +887,6 @@ function getMovies(currentPage, url) {
    else if(movie_list){
       url += '&page=' + currentPage;
       fetch(url).then(res=> res.json()).then(data => {
-         
-         console.log('HALLO ' + data.total_pages);
          if(data.total_pages != 0){
             (data.total_pages > 500) ? maxPage = 500 : maxPage = data.total_pages;
             showMovies(data.results, url, maxPage, data.page);}
@@ -904,7 +898,6 @@ function getMovies(currentPage, url) {
    }
    else if(tv_list){
       url += '&page=' + currentPage;
-      console.log(url);
       fetch(url).then(res=> res.json()).then(data => {
          if(data.total_pages != 0){
             (data.total_pages > 500) ? maxPage = 500 : maxPage = data.total_pages;
@@ -1034,7 +1027,6 @@ function showMovies(data,url,maxPage,currentPage) {
 
 
       for(let i = 1; i<=maxPage;i++){
-         /* console.log('page: ' + i); PAGINATION*/
          const page_button = document.createElement('button');
          page_button.classList.add('btn', 'bg-custom-1', 'p-2');
          page_button.textContent = i;
@@ -1120,7 +1112,6 @@ function getDetails() {
    {
          url = TV_URL + tvId + '?' + API_KEY;                                                    
          fetch(url).then(res=> res.json()).then(data => {
-            console.log(url);
             showDetails(data);
             getCredits();
             getRelatedMovies();
@@ -1129,7 +1120,6 @@ function getDetails() {
    else if (person_detail_container){
       url = PERSON_URL + personId + '?' + API_KEY;                                                    
          fetch(url).then(res=> res.json()).then(data => {
-            console.log(data + ' ' + url);
             showDetails(data);
             getCredits();
          });
@@ -1308,16 +1298,12 @@ function getRelatedMovies()
    if(related_movies){
       url = MOVIE_URL + movieId + '/recommendations?' + API_KEY;
       fetch(url).then(res=> res.json()).then(data => {
-         console.log('MOVIE');
-         console.log(data.results);
          showRelatedMovies(data.results, data.total_results);
       })
    }
    else if(related_tv){
       url = TV_URL + tvId + '/recommendations?' + API_KEY;
       fetch(url).then(res=> res.json()).then(data => {
-      console.log('MOVIE');
-      console.log(data.results);
          showRelatedMovies(data.results, data.total_results);
       })
    }
@@ -1462,7 +1448,6 @@ function getSimilar() {
       url = TV_URL + tvId + '/similar?' + API_KEY;
    }
    fetch(url).then(res=> res.json()).then(data => {
-      console.log(data);
       showSimilar(data.results);
    });
 }
@@ -1698,21 +1683,18 @@ function getCredits(){
    if(casts_container){
       url = MOVIE_URL + movieId + '/credits?' + API_KEY;
    fetch(url).then(res=> res.json()).then(data => {
-      console.log(data);
       showCredits(data.crew, data.cast); 
    })
    }
    else if(tv_casts_container){
       url = TV_URL + tvId + '/credits?' + API_KEY + '&sort_by=popularity.desc';
    fetch(url).then(res=> res.json()).then(data => {
-      console.log(data);
       showCredits(data.crew, data.cast); 
    })
    }
    else if(person_casts_container){
       url = PERSON_URL + personId + '/combined_credits?' + API_KEY + '&sort_by=popularity.desc';
       fetch(url).then(res=> res.json()).then(data => {
-         console.log(data);
          showCredits(data.crew, data.cast); 
       })
    }
@@ -1971,7 +1953,6 @@ function showCredits(crews, casts) {
          person_casts_container.appendChild(movieCard);
          }
          else if(media_type == 'tv' && job == 'Director'){
-            console.log(job);
             const movieCard = document.createElement('div');
             let poster_image = '';
             var rounded_rating = Math.round(vote_average * 10) / 10;
@@ -2117,13 +2098,11 @@ function showSearchResult(data, search_Type,url,maxPage,currentPage) {
    page_container.innerHTML = '';
       var current = window.location.href;
       var lastChar = current.indexOf('/', 8);
-      console.log(lastChar + ' idk');
       const movieLink = current.substr(0 , lastChar) + '/movie';
       const tvLink = current.substr(0 , lastChar) + '/tv';
       const personLink = current.substr(0 , lastChar) + '/person';
       /* if list-item selected is movie */
       for(let i = 1; i<=maxPage;i++){
-         /* console.log('page: ' + i); PAGINATION*/
          const page_button = document.createElement('button');
          page_button.classList.add('btn', 'bg-custom-1', 'p-2');
          page_button.textContent = i;
