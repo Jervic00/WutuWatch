@@ -97,3 +97,7 @@ Route::get('/tv-list', function () {
 Route::get('/terms', function () {
    return view('TermsAndCondition');
 })->name('terms');
+
+Route::get('/privacy_policy', function () {
+   return view('privacy_policy');
+})->name('privacy_policy');

@@ -159,6 +159,7 @@
                 <li class="nav-item mb-2"><a href="{{ route('register')}}" class="nav-link p-0 text-muted">Register</a></li>
                 @endguest
                 <li class="nav-item mb-2"><a href="{{ route('terms') }}" class="nav-link p-0 text-muted"></i> Terms of Service</a></li>
+                <li class="nav-item mb-2"><a href="{{ route('privacy_policy') }}" class="nav-link p-0 text-muted"></i> Privacy Policy</a></li>
             </ul>
             </div>
             <div class="m-0 w-100 bg-custom-2 d-flex justify-content-center">
