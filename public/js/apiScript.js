@@ -1303,7 +1303,7 @@ function getRelatedMovies()
    }
    else if(related_tv){
       url = TV_URL + tvId + '/recommendations?' + API_KEY;
-      fetch(url).then(res=> res.json()).then(data => {
+         fetch(url).then(res=> res.json()).then(data => {
          showRelatedMovies(data.results, data.total_results);
       })
    }
