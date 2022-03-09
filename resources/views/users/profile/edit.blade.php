@@ -12,7 +12,7 @@
         </div>
         @endif
         <div class="my-2 rounded-lg mb-6 text-white text-center">
-            <h3>Change Username/Email</h3>
+            <h3>Change Username</h3>
         </div>
     <form action="{{ route('update.users.profile') }}" method="post">
             @csrf
@@ -23,18 +23,6 @@
                     is-invalid @enderror " placeholder="Username" id="username" value="{{ auth()->user()->username }}">
 
                 @error('username')
-                <div class="text-danger fw-lighter mt-2 fs-6">
-                    {{ $message }}
-                </div>
-                @enderror
-            </div>
-
-            <div class="mb-4">
-                <label for="email">Email</label>
-                <input type="text" name="email" class="form-control form-control-lg @error('email')
-                    is-invalid @enderror " placeholder="Your email" id="email" value="{{ auth()->user()->email }}">
-
-                @error('email')
                 <div class="text-danger fw-lighter mt-2 fs-6">
                     {{ $message }}
                 </div>

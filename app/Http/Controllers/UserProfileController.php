@@ -62,8 +62,7 @@ class UserProfileController extends Controller
 
     public function update(Request $request){
         $validatedData = $request->validate([
-            'username' => 'required|max:26|min:6|unique:users,username,' .auth()->user()->id ,
-            'email' => 'required|email|max:255|unique:users,email,' .auth()->user()->id
+            'username' => 'required|max:26|min:6|unique:users,username,' .auth()->user()->id
             ]);
         
         $update = User::find(auth()->user()->id)->update($validatedData);

@@ -14,7 +14,7 @@
                 <div class="change-dp d-flex justify-content-center mt-2">
                     <input type="file" name="profile_image" id="profile_image" style="display: none;">
                     <a href="javascript:void(0)" class="btn btn-primary m-1 p-1 btn-block" id="change_picture_btn">CHANGE PICTURE</a>
-                    <a href="{{ route('edit.users.profile') }}" class="btn btn-primary m-1 p-1 btn-block">EDIT PROFILE</a>
+                    <a href="{{ route('edit.users.profile') }}" class="btn btn-primary m-1 p-1 btn-block">CHANGE USERNAME</a>
                 </div>
                 @endif
                 @endauth
