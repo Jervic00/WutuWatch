@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Auth;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserProfileController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth']);
+    }
+
     public function index(User $user, Request $request){
         $media_type = $request->media_type;
         $movieId = $request->id;
@@ -50,4 +55,24 @@ class UserProfileController extends Controller
             }
         }
     }
+
+    public function edit(Request $request, User $user){
+        return view('users.profile.edit');
+    }
+
+    public function update(Request $request){
+        $validatedData = $request->validate([
+            'username' => 'required|max:26|min:6|unique:users,username,' .auth()->user()->id ,
+            'email' => 'required|email|max:255|unique:users,email,' .auth()->user()->id
+            ]);
+        
+        $update = User::find(auth()->user()->id)->update($validatedData);
+        if (!$update) {
+            return redirect()->back()->with('status', 'Invalid Input');
+        }
+        else{
+            return redirect()->route('users.profile', $request->username);
+        }
+    }
+
 }

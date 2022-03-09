@@ -38,9 +38,6 @@
 
     gtag('config', 'G-R7FB54TSMH');
     </script>
-
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4057172904472465"
-    crossorigin="anonymous"></script>
 </head>
 
 <body class="bg-custom-4 bg">

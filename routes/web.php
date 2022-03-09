@@ -14,9 +14,12 @@ use App\Http\Controllers\CommentLikeController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\ForgotPasswordController;
 
 /* User colon ":" to choose column name you want to extract for route model binding */
 Route::get('/users/{user:username}/posts', [UserProfileController::class, 'index'])->name('users.profile');
+Route::get('/users/edit', [UserProfileController::class, 'edit'])->name('edit.users.profile');
+Route::put('/users/edit', [UserProfileController::class, 'update'])->name('update.users.profile');
 Route::post('/change-profile', [UserProfileController::class, 'updateProfile'])->name('profileChange');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -29,10 +32,10 @@ Route::post('/logout', [LogoutController::class, 'store'])->name('logout');
    Route::get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify')->middleware(['signed']);
    Route::post('/email/resend', [VerificationController::class, 'resend'])->name('verification.resend');
   /*  }); */
-  Route::get('/verification/success', function () {
+Route::get('/verification/success', function () {
    return view('verification.success');
 })->name('verification.sucess');
-  
+
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'store']);
 
@@ -69,10 +72,11 @@ Route::get('/watchlist', [WatchlistController::class, 'index'])->name('user.watc
 Route::get('/watched', [WatchedController::class, 'index'])->name('user.watched');
 Route::get('/favorite', [FavoriteController::class, 'index'])->name('user.favorite');
 
-/* Route::get('/tv', function () {
-   return view('partials.tv');
-})->name('tv'); */
 
+Route::get('forget-password', [ForgotPasswordController::class, 'showForgetPasswordForm'])->name('forget.password.get');
+Route::post('forget-password', [ForgotPasswordController::class, 'submitForgetPasswordForm'])->name('forget.password.post'); 
+Route::get('reset-password/{token}', [ForgotPasswordController::class, 'showResetPasswordForm'])->name('reset.password.get');
+Route::post('reset-password', [ForgotPasswordController::class, 'submitResetPasswordForm'])->name('reset.password.post');
 
 Route::get('/person', function () {
    return view('partials.person');

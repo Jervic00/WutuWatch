@@ -78,7 +78,7 @@
             <div class="form-check mb-2">
                     <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" oninvalid="this.setCustomValidity('Accept Terms and Conditions to continue.')" oninput="setCustomValidity('')" required>
                     <label class="form-check-label" for="flexCheckDefault">
-                        I accept the <a href="{{ route('terms')}}" class="">Terms And Condition</a>
+                        I accept the <a href="{{ route('terms')}}" class="text-decoration-none">Terms And Condition</a>
                     </label>
                     </div>
             <div>

@@ -271,9 +271,6 @@ const provider_region = [
       "native_name":"South Africa"
    }
 ];
-var Providers_PH = [
-   
-];
 const tv_genres = [
    {
       "id":10759,
@@ -418,6 +415,7 @@ const genres = [
             "name":"Western"
          }
       ];
+
       const sortDropdown = document.getElementById('sort-select');
 
 var selectedGenre = [];
@@ -1612,7 +1610,7 @@ function findTrailer(data) {
          let trailer = 0;
          if(trailer == 0){
             if(site == "YouTube" && type == "Trailer")
-            {  /* src="https://www.youtube-nocookie.com/embed/cttnRmcr_ME?enablejsapi=1&html5=1&autplay=1&modestbranding=1&color=white" */
+            {  
                document.getElementById('trailer-video').src = `https://www.youtube-nocookie.com/embed/${key}?enablejsapi=1&html5=1&showinfo=0&rel=0&cc_load_policy=1&autoplay=0`;
                document.getElementById('trailer-button').innerHTML = `<button class="btn btn-dark mb-3 " id="open-button"><i class="fas fa-play"></i> Play Trailer</button>`;
                trailer++;
@@ -1635,7 +1633,7 @@ function findTrailer(data) {
          let trailer = 0;
          if(trailer == 0){
             if(site == "YouTube" && type == "Trailer")
-            {  /* src="https://www.youtube-nocookie.com/embed/cttnRmcr_ME?enablejsapi=1&html5=1&autplay=1&modestbranding=1&color=white" */
+            {  
                document.getElementById('trailer-video').src = `https://www.youtube-nocookie.com/embed/${key}?enablejsapi=1&html5=1&showinfo=0&rel=0&cc_load_policy=1&autoplay=0`;
                document.getElementById('trailer-button').innerHTML = `<button class="btn btn-dark mb-3 " id="open-button"><i class="fas fa-play"></i> Play Trailer</button>`;
                trailer++;
@@ -1655,7 +1653,6 @@ function findTrailer(data) {
 }
 
    /* GETTING TRAILER FROM MOVIE SELECTED END */
-
 
 /* GETTING CREDITS FROM MOVIE SELECTED */
 function getCredits(){
@@ -2007,8 +2004,6 @@ function showCredits(crews, casts) {
    } 
    }
    /* END OF GETTING CREDITS FROM MOVIE SELECTED */
-
-
 
 /* GET KEYWORD FROM SEARCHBOX */
    function getKeyword(search_Type, currentPage)
@@ -2431,7 +2426,4 @@ function showSearchResult(data, search_Type,url,maxPage,currentPage) {
             return formattedDate;
          });
       }
-
-
-
    }

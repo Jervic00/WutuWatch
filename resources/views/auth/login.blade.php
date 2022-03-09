@@ -33,7 +33,9 @@
             </div>
 
             <div class="mb-4">
-                <label for="password">Password</label>
+                <div class="d-flex justify-content-between">
+                    <label for="password">Password</label> <a href="{{ route('forget.password.get')}}" class="fw-bold text-decoration-none pe-2">Forgot Password</a>
+                </div>
                 <input type="password" name="password" class="form-control form-control-lg @error('name')
                     is-invalid @enderror " placeholder="Enter your password" id="password">
 
@@ -44,7 +46,7 @@
                 @enderror
             </div>
             <div class="mb-2">
-                Don't have account? Register<a href="{{ route('register')}}" class="fw-bold"> here.</a>
+                <p class="m-0">Don't have account? <a href="{{ route('register')}}" class="fw-bold text-decoration-none">Register Now!</a></p>
             </div>
             <div class="mb-4">
                 <div class="flex align-items-center">
