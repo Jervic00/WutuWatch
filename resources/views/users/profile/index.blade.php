@@ -8,7 +8,11 @@
         <!-- profile banner -->
         <div class="px-5 py-3 d-flex border-bottom border-light">
             <div class="user-avatar me-4">
+                @if(public_path('users/images/'.$user->profile_image))
+                <img src="{{asset('users/images/no-image.png' )}}" class="profile-pic profile-image m-0" alt="{{$user->username}}">
+                @else
                 <img src="{{asset('users/images/' .$user->profile_image )}}" class="profile-pic profile-image m-0" alt="{{$user->username}}">
+                @endif
                 @auth
                 @if($user->id == auth()->user()->id)
                 <div class="change-dp d-flex justify-content-center mt-2">

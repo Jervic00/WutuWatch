@@ -19,7 +19,11 @@
         @else
             <div class="user-container bg-overlay-1 border d-flex align-items-center p-2 mb-3 ">
                     <div class="user-avatar">
-                        <img src="{{asset('users/images/' .auth()->user()->profile_image )}}" class="profile-pic m-0" style="width: 90% !important" alt="Username">
+                    @if(file_exists(public_path('users/images/'.auth()->user()->profile_image)))
+                    <img src="{{asset('users/images/' .auth()->user()->profile_image )}}" class="profile-pic m-0" alt="{{auth()->user()->username}}">
+                    @else
+                    <img src="{{asset('users/images/no-image.png' )}}" class="profile-pic m-0" alt="{{auth()->user()->username}}">
+                    @endif
                     </div>
                 <form class="w-100 d-flex flex-column align-items-start" action="{{ route($media_type, ['id' => $movieId , 'media_type' => $media_type]) }}" method="post">
                     @csrf
@@ -63,7 +67,11 @@
             <div class="user-review bg-overlay-1 d-flex align-items-top border mb-2">
                 <div class="user-container border d-flex flex-column align-items-center p-2">
                     <div class="user-avatar">
-                        <img src="{{asset('users/images/' .$single_comment->user->profile_image )}}" class="profile-pic m-0" alt="Username">
+                        @if(file_exists(public_path('users/images/' .$single_comment->user->profile_image)))
+                            <img src="{{asset('users/images/' .$single_comment->user->profile_image )}}" class="profile-pic m-0" alt="{{$single_comment->user->username}}">
+                        @else
+                            <img src="{{asset('users/images/no-image.png' )}}" class="profile-pic m-0" alt="{{$single_comment->user->username}}">
+                        @endif
                     </div>
                     <div class="user-details text-center p-2">
                         <a href="{{ route('users.profile', $single_comment->user)}}" class="text-decoration-none text-white" ><small>{{ $single_comment->user->username}}</small></a>
@@ -132,7 +140,6 @@
                     </div>
                 </div>
             </div>
-            <h5 class="border-top border-info w-100 mt-2 pt-3">User Reviews</h5>
         @endif
     @endauth
 

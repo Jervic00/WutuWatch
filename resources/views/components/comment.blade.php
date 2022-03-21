@@ -1,9 +1,13 @@
 @props(['comment' => $comment, 'media_type' => $mediaType, 'movieId' => $movieId])
-
+@if($comment->user->id != auth()->user()->id)
 <div class="user-review bg-overlay-1 d-flex align-items-top border mb-2">
         <div class="user-container border d-flex flex-column align-items-center p-2">
             <div class="user-avatar">
+                @if(file_exists(public_path('users/images/'.$comment->user->profile_image)))
                 <img src="{{asset('users/images/' .$comment->user->profile_image )}}" class="profile-pic m-0" alt="{{$comment->user->username}}">
+                @else
+                <img src="{{asset('users/images/no-image.png' )}}" class="profile-pic m-0" alt="{{$comment->user->username}}">
+                @endif
             </div>
             <div class="user-details text-center p-2">
                     <a href="{{ route('users.profile', $comment->user)}}" class="text-decoration-none text-white" ><small>{{ $comment->user->username}}</small></a>
@@ -71,3 +75,4 @@
             </div>
         </div>
     </div>
+@endif

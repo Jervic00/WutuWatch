@@ -42,8 +42,8 @@ class UserProfileController extends Controller
             $oldPicture = User::find(Auth::user()->id)->getAttributes()['profile_image'];
 
             if( $oldPicture != '' ){
-                if( \File::exists(public_path($path.$oldPicture))){
-                    \File::delete(public_path($path.$oldPicture));
+                if( File::exists(public_path($path.$oldPicture))){
+                    File::delete(public_path($path.$oldPicture));
                 }
             }
 

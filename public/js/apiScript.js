@@ -1126,6 +1126,7 @@ function getDetails() {
 }
 
 function showDetails(data) {
+try{
       if(detail_container){
       const {original_title, title, poster_path, vote_average, overview, genres, status, tagline, release_date, budget, revenue, original_language, homepage } = data;
       document.title = title + ' - WutuWatch';
@@ -1275,6 +1276,10 @@ function showDetails(data) {
             `;
       person_detail_container.appendChild(movieDetails);
       }
+   }
+   catch(exception){
+      window.location.href = '/';
+   }
    /* if data */
 }
 
