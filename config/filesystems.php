@@ -53,6 +53,13 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
 
+        'b2' => [
+            'driver'         => 'b2',
+            'accountId'      => '004ae1d73918acc0000000001',
+            'applicationKey' => 'K004+XrjOAM8nwhXFTgV8f+JN2vyGdQ',
+            'bucketName'     => 'Jervic',
+        ],
+
     ],
 
     /*

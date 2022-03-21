@@ -66,7 +66,7 @@
             </div>
             @endforeach
             @else
-            <h5>You don't have watchlist yet.</h5>
+            <h5>You don't have watched list yet.</h5>
             <a href="{{ route('movie-list') }}" target="_blank" rel="noopener noreferrer">Look for movies or shows to watch?</a>
             @endif
             <!--  -->

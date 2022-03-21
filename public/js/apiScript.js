@@ -1062,7 +1062,7 @@ function showMovies(data,url,maxPage,currentPage) {
 
 /*  SHOW DETAILS FROM MOVIE SELECTED  */
 function movieSelected(id,media_type) {
-      
+   
    if(media_type == 'tv'){
       sessionStorage.setItem('tvId', id);
    }
@@ -1111,6 +1111,7 @@ function getDetails() {
          url = TV_URL + tvId + '?' + API_KEY;                                                    
          fetch(url).then(res=> res.json()).then(data => {
             showDetails(data);
+            console.log(data.success);
             getCredits();
             getRelatedMovies();
          });
@@ -1125,155 +1126,156 @@ function getDetails() {
 }
 
 function showDetails(data) {
-   if(detail_container){
-   const {original_title, title, poster_path, vote_average, overview, genres, status, tagline, release_date, budget, revenue, original_language, homepage } = data;
-   document.title = title + ' - WutuWatch';
-   const movieDetails = document.createElement('div');
-   let poster_image = '';
-   let homep = '';
-   if (!isNaN(Date.parse(release_date))) {
-      let date = release_date.split('-');
-      var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
-   }   
-   if(homepage){
-   homep = `<a class="ms-3 mb-3 btn btn-info" href="${homepage}" target="_blank">Visit Homepage</a>`;}
-   const genresArr = [];
-   genres.forEach((genre) => {
-      if (genre.name) {
-         genresArr.push(genre.name);
+      if(detail_container){
+      const {original_title, title, poster_path, vote_average, overview, genres, status, tagline, release_date, budget, revenue, original_language, homepage } = data;
+      document.title = title + ' - WutuWatch';
+      const movieDetails = document.createElement('div');
+      let poster_image = '';
+      let homep = '';
+      if (!isNaN(Date.parse(release_date))) {
+         let date = release_date.split('-');
+         var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+      }   
+      if(homepage){
+      homep = `<a class="ms-3 mb-3 btn btn-info" href="${homepage}" target="_blank">Visit Homepage</a>`;}
+      const genresArr = [];
+      genres.forEach((genre) => {
+         if (genre.name) {
+            genresArr.push(genre.name);
+         }
+         });
+      (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+      movieDetails.classList.add('row', 'movie-details');
+      movieDetails.innerHTML = `
+         <div class="col-md-4">
+            <img src="${poster_image}" class="img-fluid w-100 rounded" alt="${original_title}">
+         </div>
+         <div class="col-md-8">
+            <h3>${(original_title != title) ? original_title + ' (' + title + ')': original_title}</h3>
+            <p class="custom-color-5 fst-italic">${tagline}</p>
+            <p>${overview}</p>
+            <div class="d-flex align-items-between">
+               <div id="trailer-button">${getTrailer()}</div>
+               ${homep}
+            </div>
+               <ul class="list-group shadow">
+                  <li class="list-group-item list-group-item-dark"><strong>Genre:</strong> ${genresArr.join(',')}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Released:</strong> ${formattedDate}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Status:</strong> ${status}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Budget:</strong> $${thousands_separators(budget)}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Revenue:</strong> $${thousands_separators(revenue)}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>TMDB Rating:</strong> ${vote_average}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Original Language:</strong> ${original_language.toUpperCase()}</li>
+               </ul>
+         </div>
+            `;
+      detail_container.appendChild(movieDetails);
       }
-      });
-   (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
-   movieDetails.classList.add('row', 'movie-details');
-   movieDetails.innerHTML = `
-      <div class="col-md-4">
-         <img src="${poster_image}" class="img-fluid w-100 rounded" alt="${original_title}">
-      </div>
-      <div class="col-md-8">
-         <h3>${(original_title != title) ? original_title + ' (' + title + ')': original_title}</h3>
-         <p class="custom-color-5 fst-italic">${tagline}</p>
-         <p>${overview}</p>
-         <div class="d-flex align-items-between">
+      else if(tv_detail_container){
+      const {name, original_name, poster_path, vote_average, overview, genres, status, tagline, first_air_date, 
+            last_air_date, number_of_seasons, number_of_episodes, original_language, homepage } = data;
+            document.title = name + ' - WutuWatch';
+      const movieDetails = document.createElement('div');
+      let poster_image = '';
+      let homep = '';
+      if (!isNaN(Date.parse(first_air_date))) {
+         let date = first_air_date.split('-');
+         var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+         if(!isNaN(Date.parse(last_air_date))){
+            let date = last_air_date.split('-');
+            var formattedDate1 = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+         }
+      }   
+      if(homepage){
+      homep = `<a class="ms-3 mb-3 btn btn-info" href="${homepage}" target="_blank">Visit Homepage</a>`;}
+      const genresArr = [];
+      genres.forEach((genre) => {
+         if (genre.name) {
+            genresArr.push(genre.name);
+         }
+         });
+      (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+      movieDetails.classList.add('row', 'movie-details');
+      movieDetails.innerHTML = `
+         <div class="col-md-4">
+            <img src="${poster_image}" class="img-fluid w-100 rounded" alt="${name}">
+         </div>
+         <div class="col-md-8">
+            <h3>${(original_name != name) ? original_name + ' (' + name + ')': original_name}</h3>
+            <p class="custom-color-5 fst-italic">${tagline}</p>
+            <p>${overview}</p>
+            <div class="d-flex align-items-center">
             <div id="trailer-button">${getTrailer()}</div>
             ${homep}
+            </div>
+               <ul class="list-group shadow">
+                  <li class="list-group-item list-group-item-dark"><strong>Genre:</strong> ${genresArr.join(',')}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>First Air:</strong> ${formattedDate}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Last Air:</strong> ${formattedDate1}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Number of Episode(s):</strong> ${number_of_episodes}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Number of Season(s):</strong> ${number_of_seasons}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Status:</strong> ${status}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>TMDB Rating:</strong> ${vote_average}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Original Language:</strong> ${original_language.toUpperCase()}</li>
+               </ul>
+               
          </div>
-            <ul class="list-group shadow">
-               <li class="list-group-item list-group-item-dark"><strong>Genre:</strong> ${genresArr.join(',')}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Released:</strong> ${formattedDate}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Status:</strong> ${status}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Budget:</strong> $${thousands_separators(budget)}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Revenue:</strong> $${thousands_separators(revenue)}</li>
-               <li class="list-group-item list-group-item-dark"><strong>TMDB Rating:</strong> ${vote_average}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Original Language:</strong> ${original_language.toUpperCase()}</li>
-            </ul>
-      </div>
-         `;
-   detail_container.appendChild(movieDetails);
-   }
-   else if(tv_detail_container){
-   const {name, original_name, poster_path, vote_average, overview, genres, status, tagline, first_air_date, 
-         last_air_date, number_of_seasons, number_of_episodes, original_language, homepage } = data;
+            `;
+      tv_detail_container.appendChild(movieDetails);
+      }
+      else if(person_detail_container){
+         
+         const {name, also_known_as, birthday, deathday, gender, place_of_birth, profile_path, known_for_department, biography } = data;
          document.title = name + ' - WutuWatch';
-   const movieDetails = document.createElement('div');
-   let poster_image = '';
-   let homep = '';
-   if (!isNaN(Date.parse(first_air_date))) {
-      let date = first_air_date.split('-');
-      var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
-      if(!isNaN(Date.parse(last_air_date))){
-         let date = last_air_date.split('-');
-         var formattedDate1 = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
-      }
-   }   
-   if(homepage){
-   homep = `<a class="ms-3 mb-3 btn btn-info" href="${homepage}" target="_blank">Visit Homepage</a>`;}
-   const genresArr = [];
-   genres.forEach((genre) => {
-      if (genre.name) {
-         genresArr.push(genre.name);
-      }
-      });
-   (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
-   movieDetails.classList.add('row', 'movie-details');
-   movieDetails.innerHTML = `
-      <div class="col-md-4">
-         <img src="${poster_image}" class="img-fluid w-100 rounded" alt="${name}">
-      </div>
-      <div class="col-md-8">
-         <h3>${(original_name != name) ? original_name + ' (' + name + ')': original_name}</h3>
-         <p class="custom-color-5 fst-italic">${tagline}</p>
-         <p>${overview}</p>
-         <div class="d-flex align-items-center">
-         <div id="trailer-button">${getTrailer()}</div>
-         ${homep}
-         </div>
-            <ul class="list-group shadow">
-               <li class="list-group-item list-group-item-dark"><strong>Genre:</strong> ${genresArr.join(',')}</li>
-               <li class="list-group-item list-group-item-dark"><strong>First Air:</strong> ${formattedDate}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Last Air:</strong> ${formattedDate1}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Number of Episode(s):</strong> ${number_of_episodes}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Number of Season(s):</strong> ${number_of_seasons}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Status:</strong> ${status}</li>
-               <li class="list-group-item list-group-item-dark"><strong>TMDB Rating:</strong> ${vote_average}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Original Language:</strong> ${original_language.toUpperCase()}</li>
-            </ul>
-            
-      </div>
-         `;
-   tv_detail_container.appendChild(movieDetails);
-   }
-   else if(person_detail_container){
-      
-      const {name, also_known_as, birthday, deathday, gender, place_of_birth, profile_path, known_for_department, biography } = data;
-      document.title = name + ' - WutuWatch';
-   const movieDetails = document.createElement('div');
-   let aka = '';
-   let ginger = 'Undecided';
-   let age = '';
-   let dage = '';
-   var dth = '';
-   if(birthday != undefined) {
-   let birthdate = birthday.split('-');
-   var formattedBirthday = moment(birthdate[0]+'-'+birthdate[1]+'-'+birthdate[2]).format('MMMM DD, YYYY');
-   const ageDiffM = Date.now() - new Date(birthday).getTime();
-   const ageDate = new Date(ageDiffM);
-   if(deathday == undefined)
-   age = " (" + Math.abs(ageDate.getUTCFullYear() - 1970) + " years old)";
-   }
-
-   if(deathday != undefined)
-   {  const ageDiffM = new Date(deathday).getTime() - new Date(birthday).getTime();
+      const movieDetails = document.createElement('div');
+      let aka = '';
+      let ginger = 'Undecided';
+      let age = '';
+      let dage = '';
+      var dth = '';
+      if(birthday != undefined) {
+      let birthdate = birthday.split('-');
+      var formattedBirthday = moment(birthdate[0]+'-'+birthdate[1]+'-'+birthdate[2]).format('MMMM DD, YYYY');
+      const ageDiffM = Date.now() - new Date(birthday).getTime();
       const ageDate = new Date(ageDiffM);
-      let deathdate = deathday.split('-');
-      var formattedDeathday = moment(deathdate[0]+'-'+deathdate[1]+'-'+deathdate[2]).format('MMMM DD, YYYY');
-      dage = " (" + Math.abs(ageDate.getUTCFullYear() - 1970) + " years old)";
-      dth = '<li class="list-group-item list-group-item-dark"><strong>Died:</strong> ' + formattedDeathday + dage + '</li>'
-   }
+      if(deathday == undefined)
+      age = " (" + Math.abs(ageDate.getUTCFullYear() - 1970) + " years old)";
+      }
 
-   (gender == 1) ? ginger = 'Female' : ginger = 'Male';
-   if (also_known_as.length > 0) aka = 'Also known as "' + also_known_as[0] + '"';
-   let poster_image = '';
-   (profile_path) ? poster_image = IMG_URL + profile_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
-   movieDetails.classList.add('row', 'movie-details');
-   movieDetails.innerHTML = `
-      <div class="col-md-4">
-         <img src="${poster_image}" class="img-fluid w-100 rounded" alt="${name}">
-      </div>
-      <div class="col-md-8">
-         <h3>${name}</h3>
-         <p class="custom-color-5 fst-italic">${aka}</p>
-         <ul class="list-group shadow mb-3">
-               <li class="list-group-item list-group-item-dark"><strong>Birthday:</strong> ${formattedBirthday + age }</li>
-               ${dth}
-               <li class="list-group-item list-group-item-dark"><strong>Gender:</strong> ${ginger}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Place of Birth::</strong> ${place_of_birth}</li>
-               <li class="list-group-item list-group-item-dark"><strong>Known For:</strong> ${known_for_department}</li>
-            </ul>
-         <p>${biography}</p>
-      </div>
-         `;
-   person_detail_container.appendChild(movieDetails);
-   }
+      if(deathday != undefined)
+      {  const ageDiffM = new Date(deathday).getTime() - new Date(birthday).getTime();
+         const ageDate = new Date(ageDiffM);
+         let deathdate = deathday.split('-');
+         var formattedDeathday = moment(deathdate[0]+'-'+deathdate[1]+'-'+deathdate[2]).format('MMMM DD, YYYY');
+         dage = " (" + Math.abs(ageDate.getUTCFullYear() - 1970) + " years old)";
+         dth = '<li class="list-group-item list-group-item-dark"><strong>Died:</strong> ' + formattedDeathday + dage + '</li>'
+      }
+
+      (gender == 1) ? ginger = 'Female' : ginger = 'Male';
+      if (also_known_as.length > 0) aka = 'Also known as "' + also_known_as[0] + '"';
+      let poster_image = '';
+      (profile_path) ? poster_image = IMG_URL + profile_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+      movieDetails.classList.add('row', 'movie-details');
+      movieDetails.innerHTML = `
+         <div class="col-md-4">
+            <img src="${poster_image}" class="img-fluid w-100 rounded" alt="${name}">
+         </div>
+         <div class="col-md-8">
+            <h3>${name}</h3>
+            <p class="custom-color-5 fst-italic">${aka}</p>
+            <ul class="list-group shadow mb-3">
+                  <li class="list-group-item list-group-item-dark"><strong>Birthday:</strong> ${formattedBirthday + age }</li>
+                  ${dth}
+                  <li class="list-group-item list-group-item-dark"><strong>Gender:</strong> ${ginger}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Place of Birth::</strong> ${place_of_birth}</li>
+                  <li class="list-group-item list-group-item-dark"><strong>Known For:</strong> ${known_for_department}</li>
+               </ul>
+            <p>${biography}</p>
+         </div>
+            `;
+      person_detail_container.appendChild(movieDetails);
+      }
+   /* if data */
 }
 
 function getRelatedMovies()

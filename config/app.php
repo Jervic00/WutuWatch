@@ -165,7 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
-
+        \bringyourownideas\Backblaze\BackblazeServiceProvider::class,
         /*
          * Application Service Providers...
          */

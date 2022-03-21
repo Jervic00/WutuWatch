@@ -35,7 +35,7 @@ class RegisterController extends Controller
 
         $user = User::create([
             'username' => $request->username,
-            'email' => $request->email,
+            'email' => strtolower($request->email),
             'birthdate' => $request->birthdate,
             'password' => Hash::make($request->password),
             'profile_image' => 'no-image.png'
