@@ -86,7 +86,7 @@
                 <li>
                     
                     <a href="{{ route('users.profile', auth()->user()->username)}}" class="nav-link fw-bold">
-                        @if(file_exists(public_path('users/images'. auth()->user()->profile_image)))
+                        @if(file_exists(public_path('users/images/'. auth()->user()->profile_image)))
                         <img src="{{ asset('users/images/' . auth()->user()->profile_image)}}" class="pfp-icon profile-image">
                         @else
                         <img src="{{ asset('users/images/no-image.png')}}" class="pfp-icon profile-image">
