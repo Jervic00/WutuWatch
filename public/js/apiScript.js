@@ -22,6 +22,7 @@ const person_casts_container = document.getElementById('person-casts');
 const related_movies = document.getElementById('related-movies');
 const related_tv = document.getElementById('related-tv');
 /* Get div element with id named 'main' */
+const carousel_trending = document.getElementById('carousel-inner');
 const main = document.getElementById('main');
 const main_TopGross = document.getElementById('main-top-gross');
 const main_Trending = document.getElementById('main-trending');
@@ -734,8 +735,72 @@ function getTrending(url){
    if(main_Trending){
       fetch(url).then(res=> res.json()).then(data => {
          showTrending(data.results);
+         if(carousel_trending)
+         {
+            carouselTrending(data.results);
+         }
       })
    }
+}
+
+function carouselTrending(data) {
+   var current = window.location.href;
+   var lastChar = current.indexOf('/', 8);
+   const movieLink = current.substr(0 , lastChar) + '/movie';
+   const tvLink =  current.substr(0 , lastChar) + '/tv';
+   var index=0;
+   data.forEach(movie => {
+      const {title, poster_path, vote_average, overview, id , name, media_type, genre_ids, release_date, first_air_date } = movie;
+      const movieCard = document.createElement('div');
+      let poster_image = '';
+      let movie_title = '';
+      let link = '';
+      let genresArr = [];
+      if(genre_ids.length > 0){
+         if(media_type == 'movie'){
+         genre_ids.forEach(id => {
+            genres.forEach(genre => {
+               if(id == genre.id)
+               {
+                  genresArr.push(genre.name);
+               }
+            })
+         });
+         }
+         else if(media_type == 'tv'){
+            genre_ids.forEach(id => {
+               tv_genres.forEach(genre => {
+                  if(id == genre.id)
+                  {
+                     genresArr.push(genre.name);
+                  }
+               })
+            });
+         }
+      }
+      if (!isNaN(Date.parse(release_date))) {
+         let date = release_date.split('-');
+         var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+      } 
+      else if (!isNaN(Date.parse(first_air_date))) {
+         let date = first_air_date.split('-');
+         var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+      } 
+      (media_type == 'tv') ? link = tvLink : link = movieLink;
+      (title) ? movie_title = title: movie_title = name;
+      (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+      if(index == 0){
+      movieCard.classList.add('carousel-item', 'active');
+      index++;
+      }
+      else{
+      movieCard.classList.add('carousel-item');}
+      movieCard.innerHTML =   `
+      <a onclick="movieSelected(${id},'${media_type}')" class="d-flex carousel-img text-white rounded-3" href="${link + '?id=' + id + '&media_type=' + media_type}">
+         <img src="${poster_image}" class="d-block mx-lg-auto rounded-10" alt="${movie_title}" loading="lazy">
+      </a>`;
+      carousel_trending.appendChild(movieCard);
+   });
 }
 
 function showTrending(data) {
@@ -1129,7 +1194,7 @@ function showDetails(data) {
 try{
       if(detail_container){
       const {original_title, title, poster_path, vote_average, overview, genres, status, tagline, release_date, budget, revenue, original_language, homepage } = data;
-      document.title = title + ' - WutuWatch';
+      document.title = title + ' | WutuWatch';
       const movieDetails = document.createElement('div');
       let poster_image = '';
       let homep = '';
@@ -1175,7 +1240,7 @@ try{
       else if(tv_detail_container){
       const {name, original_name, poster_path, vote_average, overview, genres, status, tagline, first_air_date, 
             last_air_date, number_of_seasons, number_of_episodes, original_language, homepage } = data;
-            document.title = name + ' - WutuWatch';
+            document.title = name + ' | WutuWatch';
       const movieDetails = document.createElement('div');
       let poster_image = '';
       let homep = '';
@@ -1227,7 +1292,7 @@ try{
       else if(person_detail_container){
          
          const {name, also_known_as, birthday, deathday, gender, place_of_birth, profile_path, known_for_department, biography } = data;
-         document.title = name + ' - WutuWatch';
+         document.title = name + ' | WutuWatch';
       const movieDetails = document.createElement('div');
       let aka = '';
       let ginger = 'Undecided';

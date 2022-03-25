@@ -1,5 +1,6 @@
 @props(['comment' => $comment, 'media_type' => $mediaType, 'movieId' => $movieId])
-@if($comment->user->id != auth()->user()->id)
+
+@if(!Auth::check() || $comment->user->id != auth()->user()->id)
 <div class="user-review bg-overlay-1 d-flex align-items-top border mb-2">
         <div class="user-container border d-flex flex-column align-items-center p-2">
             <div class="user-avatar">

@@ -6,7 +6,7 @@
 <div class="flex-mobile mb-5">
     <div class="ms-3 col-2 px-2 pt-4 ">
         <div class="bg-custom-1 rounded-top border border-light list-container text-white">
-            <h5 class="py-3 ps-3 bg-custom-1 border border-bottom border-light search-menu-container">TV Shows</h5>
+            <h5 class="py-3 ps-3 bg-custom-1 border border-bottom border-light search-menu-container">Select type of tv show you prefer</h5>
 
             <div id="sort" class="mx-auto d-flex flex-column my-3">
                 <label for="sort-select" style="width: 90%;" class="text-white mx-auto">Sort By</label>
