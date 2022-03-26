@@ -46,14 +46,14 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggleMobileMenu" aria-controls="toggleMobileMenu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
-        <div class="collapse navbar-collapse" id="toggleMobileMenu">
             <a class="navbar-brand align-middle" href="{{ route('home') }}">
                 <img src="{{ asset('img/159582.svg') }}" alt="Movie Info Logo" width="30" height="24" class="d-inline-block align-top pe-1" />
                 <span class="m-0 p-0">
                     WutuWatch
                 </span>
             </a>
+        <div class="collapse navbar-collapse" id="toggleMobileMenu">
+            
             <ul class="navbar-nav text-center">
                 <li>
                     <a class="nav-link fw-bold" href="{{ route('home') }}">Home</a>
