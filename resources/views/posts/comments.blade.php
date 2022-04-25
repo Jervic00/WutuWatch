@@ -119,7 +119,7 @@
                             <form action="{{ route($media_type .'.' .'destroy', ['comment' => $single_comment, 'id' => $movieId , 'media_type' => $media_type]) }}" method="post">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="delete-button btn bg-danger px-2 py-0" style="color: white"><i class="fas fa-trash-alt"></i> Delete</button>
+                                <button type="submit" onclick="return confirm('Are you sure?')" class="delete-button btn bg-danger px-2 py-0" style="color: white"><i class="fas fa-trash-alt"></i> Delete</button>
                             </form>
                         @endcan
                     @if (!$single_comment->LikedBy(auth()->user()) && $single_comment->user_id != auth()->user()->id)

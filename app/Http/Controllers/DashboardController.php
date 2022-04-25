@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -13,12 +14,17 @@ class DashboardController extends Controller
 
     public function index()
     {
-        /** Access the objects from the database
-         *   dd(auth()->user()); 
-         *   To access the property 'name'
-         *   dd(auth()->user()->name)
-         */
-        return view('dashboard');
+        if(auth()->user()->username === 'Jervic'){
+        $comments = Comment::with(['user'])->paginate(10);
+        /* $comments->with(['user', 'likes'])->paginate(10); */
+        return view('dashboard', [
+            'comments' => $comments,
+        ]);
+        }
+        else
+        {
+            return view('partials.home');
+        }
     }
 }
 

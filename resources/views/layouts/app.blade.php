@@ -94,6 +94,13 @@
                         {{ auth()->user()->username }}
                     </a>
                 </li>
+
+                @if(auth()->user()->username === 'Jervic')
+                <li>
+                    <a href="{{ route('dashboard')}}" class="nav-link fw-bold"> Dashboard</a>
+                </li>
+                @endif
+
                 <li class="nav-link">
                     <form action="{{ route('logout') }}" method="post">
                         @csrf

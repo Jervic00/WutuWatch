@@ -36,6 +36,19 @@
 
 <div class="container-fluid px-5 py-3">
     <div class="heading my-3" id="heading">
+        <h5 id="category_name" class="text-white">Now Playing</h5>
+    </div>
+    <div class="row g-0 home-movie-list movie-list" id="now-playing">
+
+    </div>
+    <div class="heading my-3" id="heading">
+        <h5 id="category_name" class="text-white">Upcoming Movies</h5>
+    </div>
+    <div class="row g-0 home-movie-list movie-list" id="upcoming-movies">
+
+    </div>
+    
+    <div class="heading my-3" id="heading">
         <h5 id="category_name" class="text-white">Popular Movies</h5>
     </div>
     <div class="row g-0 home-movie-list movie-list" id="main">

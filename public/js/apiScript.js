@@ -5,6 +5,8 @@ const discoMv_URL = BASE_URL + '/discover/movie?certification_country=US&certifi
 const discoTv_URL = BASE_URL + '/discover/tv?certification_country=US&certification.gte=TV-Y&certification.lte=TV-PG&' + API_KEY;
 const TopGross_URL = BASE_URL + '/discover/movie?sort_by=revenue.desc&primary_release_year=2021&' + API_KEY;
 const Trending_URL = BASE_URL + '/trending/all/day?' + API_KEY;
+const NowPlaying_URL = BASE_URL + '/movie/now_playing?' + API_KEY + '&region=PH';
+const Upcoming_URL = BASE_URL + '/movie/upcoming?' + API_KEY + '&region=US';
 const IMG_URL = 'https://image.tmdb.org/t/p/w300';
 const MOVIE_URL = BASE_URL + '/movie/';
 const TV_URL = BASE_URL + '/tv/';
@@ -25,6 +27,8 @@ const related_tv = document.getElementById('related-tv');
 const carousel_trending = document.getElementById('carousel-inner');
 const main = document.getElementById('main');
 const main_TopGross = document.getElementById('main-top-gross');
+const main_NowPlaying = document.getElementById('now-playing');
+const main_Upcoming = document.getElementById('upcoming-movies');
 const main_Trending = document.getElementById('main-trending');
 const movie_list = document.getElementById('movie-list');
 const tv_list = document.getElementById('tv-list');
@@ -448,9 +452,6 @@ var selectedProvider = [];
       }
    }
          /* TOOLTIPS */
-   /* $(function(){
-      $('[data-toggle="tooltip"]').tooltip();
-   }); */
    $(document).ready(function() {
       $("body").tooltip({ selector: '[data-toggle=tooltip]' });
    });
@@ -728,6 +729,8 @@ var selectedProvider = [];
 getMovies(1, (movie_list || main) ? discoMv_URL : discoTv_URL);
 getTopGross(TopGross_URL);
 getTrending(Trending_URL);
+getNowPlaying(NowPlaying_URL);
+getUpcoming(Upcoming_URL);
 getDetails();
 getKeyword();  /* FUNCTION FOR SEARCH BOX */
 
@@ -750,42 +753,11 @@ function carouselTrending(data) {
    const tvLink =  current.substr(0 , lastChar) + '/tv';
    var index=0;
    data.forEach(movie => {
-      const {title, poster_path, vote_average, overview, id , name, media_type, genre_ids, release_date, first_air_date } = movie;
+      const {title, poster_path, id, name, media_type} = movie;
       const movieCard = document.createElement('div');
       let poster_image = '';
       let movie_title = '';
       let link = '';
-      let genresArr = [];
-      if(genre_ids.length > 0){
-         if(media_type == 'movie'){
-         genre_ids.forEach(id => {
-            genres.forEach(genre => {
-               if(id == genre.id)
-               {
-                  genresArr.push(genre.name);
-               }
-            })
-         });
-         }
-         else if(media_type == 'tv'){
-            genre_ids.forEach(id => {
-               tv_genres.forEach(genre => {
-                  if(id == genre.id)
-                  {
-                     genresArr.push(genre.name);
-                  }
-               })
-            });
-         }
-      }
-      if (!isNaN(Date.parse(release_date))) {
-         let date = release_date.split('-');
-         var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
-      } 
-      else if (!isNaN(Date.parse(first_air_date))) {
-         let date = first_air_date.split('-');
-         var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
-      } 
       (media_type == 'tv') ? link = tvLink : link = movieLink;
       (title) ? movie_title = title: movie_title = name;
       (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
@@ -796,7 +768,7 @@ function carouselTrending(data) {
       else{
       movieCard.classList.add('carousel-item');}
       movieCard.innerHTML =   `
-      <a onclick="movieSelected(${id},'${media_type}')" class="d-flex carousel-img text-white rounded-3" href="${link + '?id=' + id + '&media_type=' + media_type}">
+      <a onclick="movieSelected(${id},'${media_type}')" class="d-flex justify-content-center carousel-img text-white rounded-3" href="${link + '?id=' + id + '&media_type=' + media_type}">
          <img src="${poster_image}" class="d-block mx-lg-auto rounded-10" alt="${movie_title}" loading="lazy">
       </a>`;
       carousel_trending.appendChild(movieCard);
@@ -938,6 +910,131 @@ function showTopGross(data) {
          main_TopGross.appendChild(movieCard);
       });
 }
+
+/* GET NOW PLAYING */
+function getNowPlaying(url){
+   if(main_NowPlaying){
+      fetch(url).then(res => res.json()).then(data => {
+         showNowPlaying(data.results);
+      })
+   }
+}
+
+function showNowPlaying(data){
+   var current = window.location.href;
+   var lastChar = current.indexOf('/', 8);
+   const movieLink = current.substr(0 , lastChar) + '/movie';
+   data.forEach(movie => {
+      const {title, poster_path, vote_average, overview, id, genre_ids, release_date} = movie;
+      const movieCard = document.createElement('div');
+      let poster_image = '';
+      let genresArr = [];
+      if(genre_ids.length > 0){
+         genre_ids.forEach(id => {
+            genres.forEach(genre => {
+               if(id == genre.id)
+               {
+                  genresArr.push(genre.name);
+               }
+            })
+         });
+      }
+      if (!isNaN(Date.parse(release_date))) {
+         let date = release_date.split('-');
+         var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+      } 
+      (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+      movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
+      movieCard.innerHTML = `
+         <div class="card bg-custom-1 text-white card-size mx-2">
+         <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${title}">
+         <div class="card-body ">
+            <div class="mb-2 mt-2 d-flex flex-column justify-content-evenly">
+               <div class="d-flex justify-content-between align-items-center">
+                  <p class="card-title text-truncate mt-1">${title}</p>
+                  <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${vote_average}</span>
+               </div>
+               <small class="card-title text-truncate">${formattedDate}</small>
+            </div>
+            <a onclick="movieSelected(${id},'movie')" class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=movie'}">
+               <div class=" overview-div">
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
+                     <strong>${title}</strong>
+                     <small>${genresArr.join(', ')}</small>
+                  </div>
+                  <div class="p-1"><p class="">${overview}</p></div>
+                  <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
+               </div>
+            </a>
+         </div>
+         </div>
+      `;
+      main_NowPlaying.appendChild(movieCard);
+   });
+}
+
+/* GET UPCOMING MOVIES */
+function getUpcoming(url){
+   if(main_Upcoming){
+      fetch(url).then(res => res.json()).then(data => {
+         showUpcoming(data.results);
+      })
+   }
+}
+
+function showUpcoming(data){
+   var current = window.location.href;
+   var lastChar = current.indexOf('/', 8);
+   const movieLink = current.substr(0 , lastChar) + '/movie';
+   data.forEach(movie => {
+      const {title, poster_path, vote_average, overview, id, genre_ids, release_date} = movie;
+      const movieCard = document.createElement('div');
+      let poster_image = '';
+      let genresArr = [];
+      if(genre_ids.length > 0){
+         genre_ids.forEach(id => {
+            genres.forEach(genre => {
+               if(id == genre.id)
+               {
+                  genresArr.push(genre.name);
+               }
+            })
+         });
+      }
+      if (!isNaN(Date.parse(release_date))) {
+         let date = release_date.split('-');
+         var formattedDate = moment(date[0]+'-'+date[1]+'-'+date[2]).format('MMMM DD, YYYY');
+      } 
+      (poster_path) ? poster_image = IMG_URL + poster_path : poster_image = 'https://via.placeholder.com/238x357/000000/FFFFFF/?text=NoImage';
+      movieCard.classList.add('col-md','my-2', 'd-flex', 'justify-content-center');
+      movieCard.innerHTML = `
+         <div class="card bg-custom-1 text-white card-size mx-2">
+         <img src="${poster_image}" class="card-img-top img-fluid align-poster-img" alt="${title}">
+         <div class="card-body ">
+            <div class="mb-2 mt-2 d-flex flex-column justify-content-evenly">
+               <div class="d-flex justify-content-between align-items-center">
+                  <p class="card-title text-truncate mt-1">${title}</p>
+                  <span class="card-text ${getColor(vote_average)} fw-bolder bg-overlay-1 rating">${vote_average}</span>
+               </div>
+               <small class="card-title text-truncate">${formattedDate}</small>
+            </div>
+            <a onclick="movieSelected(${id},'movie')" class="d-flex overview-text text-white rounded-3" href="${movieLink + '?id=' + id + '&media_type=movie'}">
+               <div class=" overview-div">
+                  <div class="py-3 px-2 d-flex flex-column text-center bg-custom-1">
+                     <strong>${title}</strong>
+                     <small>${genresArr.join(', ')}</small>
+                  </div>
+                  <div class="p-1"><p class="">${overview}</p></div>
+                  <div class="more-details p-2"><span>More Details <i class="fas fa-chevron-down"></i></span></div>
+               </div>
+            </a>
+         </div>
+         </div>
+      `;
+      main_Upcoming.appendChild(movieCard);
+   });
+}
+
 
 /* SHOW RECOMMENDED MOVIES TO HOMEPAGE */
 function getMovies(currentPage, url) {
