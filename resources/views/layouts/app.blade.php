@@ -12,18 +12,18 @@
     <title>@yield('pageTitle') | WutuWatch</title>
 
     <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" ></script>
+    <script src="{{ asset('js/app.js') }}"></script>
     <script src="{{ asset('js/apiScript.js') }}" defer></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
-    <script src = 'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js'></script>
     <!-- Tab Icon -->
     <link rel="icon" href="{{ url('img/159582.svg') }}">
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
-    
+
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
@@ -32,11 +32,13 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-R7FB54TSMH"></script>
     <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+        window.dataLayer = window.dataLayer || [];
 
-    gtag('config', 'G-R7FB54TSMH');
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'G-R7FB54TSMH');
     </script>
 </head>
 
@@ -46,14 +48,14 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#toggleMobileMenu" aria-controls="toggleMobileMenu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-            <a class="navbar-brand align-middle" href="{{ route('home') }}">
-                <img src="{{ asset('img/159582.svg') }}" alt="Movie Info Logo" width="30" height="24" class="d-inline-block align-top pe-1" />
-                <span class="m-0 p-0">
-                    WutuWatch
-                </span>
-            </a>
+        <a class="navbar-brand align-middle" href="{{ route('home') }}">
+            <img src="{{ asset('img/159582.svg') }}" alt="Movie Info Logo" width="30" height="24" class="d-inline-block align-top pe-1" />
+            <span class="m-0 p-0">
+                WutuWatch
+            </span>
+        </a>
         <div class="collapse navbar-collapse" id="toggleMobileMenu">
-            
+
             <ul class="navbar-nav text-center">
                 <li>
                     <a class="nav-link fw-bold" href="{{ route('home') }}">Home</a>
@@ -84,7 +86,7 @@
             <div class="d-flex align-items-center navbar-nav ms-auto text-center">
                 @auth
                 <li>
-                    
+
                     <a href="{{ route('users.profile', auth()->user()->username)}}" class="nav-link fw-bold">
                         @if(file_exists(public_path('users/images/'. auth()->user()->profile_image)))
                         <img src="{{ asset('users/images/' . auth()->user()->profile_image)}}" class="pfp-icon profile-image">
@@ -122,63 +124,63 @@
     </nav>
 
     @yield('content')
-    
+
     <div class="container-fluid ">
         <footer class="row row-cols-3 justify-content-center pt-3 border-top bg-custom-1">
             <div class="col">
-            <a class="d-flex flex-column justify-content-center align-items-center text-decoration-none mb-3" href="{{ route('home') }}">
-                
-            <img src="{{ asset('img/159582.svg') }}" alt="Movie Info Logo" height="50" class="d-inline-block align-top pe-1" />
-                <h4 class="m-0 p-0 text-white fw-bolder">
-                    WutuWatch
-                </h4>
-            </a>
-            <a href="https://developers.themoviedb.org/3/getting-started/introduction" class="d-flex justify-content-center mb-3 link-dark text-decoration-none">
-            <img src="{{ asset('img/TMDBlogo.svg') }}" style="height: 50px; width: 100%;" alt="TMDB">
-            </a>
-            
+                <a class="d-flex flex-column justify-content-center align-items-center text-decoration-none mb-3" href="{{ route('home') }}">
+
+                    <img src="{{ asset('img/159582.svg') }}" alt="Movie Info Logo" height="50" class="d-inline-block align-top pe-1" />
+                    <h4 class="m-0 p-0 text-white fw-bolder">
+                        WutuWatch
+                    </h4>
+                </a>
+                <a href="https://developers.themoviedb.org/3/getting-started/introduction" class="d-flex justify-content-center mb-3 link-dark text-decoration-none">
+                    <img src="{{ asset('img/TMDBlogo.svg') }}" style="height: 50px; width: 100%;" alt="TMDB">
+                </a>
+
             </div>
 
             <div class="col">
-            <h5>Links</h5>
-            <ul class="nav flex-column">
-                <li class="nav-item mb-2"><a href="{{ route('home') }}" class="nav-link p-0 text-muted">Home</a></li>
-                <li class="nav-item mb-2"><a href="{{ route('movie-list') }}" class="nav-link p-0 text-muted">Movies</a></li>
-                <li class="nav-item mb-2"><a href="{{ route('tv-list') }}" class="nav-link p-0 text-muted">TV Shows</a></li>
-                <li class="nav-item mb-2"><a href="{{ route('user.watchlist') }}" class="nav-link p-0 text-muted">Watchlist</a></li>
-                <li class="nav-item mb-2"><a href="{{ route('user.favorite') }}" class="nav-link p-0 text-muted">Favorites</a></li>
-            </ul>
+                <h5>Links</h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-2"><a href="{{ route('home') }}" class="nav-link p-0 text-muted">Home</a></li>
+                    <li class="nav-item mb-2"><a href="{{ route('movie-list') }}" class="nav-link p-0 text-muted">Movies</a></li>
+                    <li class="nav-item mb-2"><a href="{{ route('tv-list') }}" class="nav-link p-0 text-muted">TV Shows</a></li>
+                    <li class="nav-item mb-2"><a href="{{ route('user.watchlist') }}" class="nav-link p-0 text-muted">Watchlist</a></li>
+                    <li class="nav-item mb-2"><a href="{{ route('user.favorite') }}" class="nav-link p-0 text-muted">Favorites</a></li>
+                </ul>
             </div>
 
             <div class="col">
-            <h5>Section</h5>
-            <ul class="nav flex-column">
-                @auth
-                <li class="nav-item mb-2"><a href="{{ route('users.profile', auth()->user()->username)}}" class="nav-link p-0 text-muted">{{ auth()->user()->username }}</a></li>
-                <li class="nav-item mb-2">
-                    <form action="{{ route('logout') }}" method="post">
-                        @csrf
-                        <button type="submit" class="btn nav-link p-0 text-muted">Logout</button>
-                    </form>
-                </li>
-                @endauth
-                @guest
-                <li class="nav-item mb-2"><a href="{{ route('login') }}" class="nav-link p-0 text-muted"></i> Login</a></li>
-                <li class="nav-item mb-2"><a href="{{ route('register')}}" class="nav-link p-0 text-muted">Register</a></li>
-                @endguest
-                <li class="nav-item mb-2"><a href="{{ route('terms') }}" class="nav-link p-0 text-muted"></i> Terms of Service</a></li>
-                <li class="nav-item mb-2"><a href="{{ route('privacy_policy') }}" class="nav-link p-0 text-muted"></i> Privacy Policy</a></li>
-            </ul>
+                <h5>Section</h5>
+                <ul class="nav flex-column">
+                    @auth
+                    <li class="nav-item mb-2"><a href="{{ route('users.profile', auth()->user()->username)}}" class="nav-link p-0 text-muted">{{ auth()->user()->username }}</a></li>
+                    <li class="nav-item mb-2">
+                        <form action="{{ route('logout') }}" method="post">
+                            @csrf
+                            <button type="submit" class="btn nav-link p-0 text-muted">Logout</button>
+                        </form>
+                    </li>
+                    @endauth
+                    @guest
+                    <li class="nav-item mb-2"><a href="{{ route('login') }}" class="nav-link p-0 text-muted"></i> Login</a></li>
+                    <li class="nav-item mb-2"><a href="{{ route('register')}}" class="nav-link p-0 text-muted">Register</a></li>
+                    @endguest
+                    <li class="nav-item mb-2"><a href="{{ route('terms') }}" class="nav-link p-0 text-muted"></i> Terms of Service</a></li>
+                    <li class="nav-item mb-2"><a href="{{ route('privacy_policy') }}" class="nav-link p-0 text-muted"></i> Privacy Policy</a></li>
+                </ul>
             </div>
             <div class="m-0 w-100 bg-custom-2 d-flex justify-content-center">
-            <small class="text-muted">This product uses the TMDB API but is not endorsed or certified by TMDB.</small>
+                <small class="text-muted">This product uses the TMDB API but is not endorsed or certified by TMDB.</small>
                 <small class="text-muted"> | © 2021 WutuWatch | All Rights Reserved</small>
-        </div>
+            </div>
         </footer>
-        
+
     </div>
 
-    
+
 </body>
 
 </html>
